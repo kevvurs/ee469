@@ -1,0 +1,11 @@
+module mux2_1(out, q, i1, en);   
+	output logic out;    
+	input  logic q, i1, en; 
+	logic out1, out2, out;
+	
+	and(out1, in, en);
+	and (out2, q & ~en);
+	or (out, out1, out2);
+	
+endmodule    
+

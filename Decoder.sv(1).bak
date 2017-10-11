@@ -1,0 +1,60 @@
+module Decoder (writeReg, RegWrite, regSelect);
+	input [4:0] writeReg;
+	input RegWrite;
+	output [31:0] regSelect;
+	
+	logic case1, case2, case3, case4, case5, case6, case7, case8;
+	
+	and (case1, ~writeReg[4], ~writeReg[3], ~writeReg[2]);
+	and (case2, ~writeReg[4], ~writeReg[3], writeReg[2]);
+	and (case3, ~writeReg[4], writeReg[3], ~writeReg[2]);
+	and (case4, ~writeReg[4], writeReg[3], writeReg[2]);
+	and (case5, writeReg[4], ~writeReg[3], ~writeReg[2]);
+	and (case6, writeReg[4], ~writeReg[3], writeReg[2]);
+	and (case7, writeReg[4], writeReg[3], ~writeReg[2]);
+	and (case8, writeReg[4], writeReg[3], writeReg[2]);
+
+
+	assign regSelect[31] = 0;
+	
+	and (regSelect[0], RegWrite, case1, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case1, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case1, writeReg[1], ~writeReg[0]);
+	and (regSelect[3], RegWrite, case1, writeReg[1], writeReg[0]);
+	
+	and (regSelect[0], RegWrite, case2, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case2, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case2, writeReg[1], ~writeReg[0]);
+	and (regSelect[3], RegWrite, case2, writeReg[1], writeReg[0]);
+	
+	and (regSelect[0], RegWrite, case3, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case3, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case3, writeReg[1], ~writeReg[0]);
+	and (regSelect[3], RegWrite, case3, writeReg[1], writeReg[0]);
+	
+	and (regSelect[0], RegWrite, case4, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case4, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case4, writeReg[1], ~writeReg[0]);
+	and (regSelect[3], RegWrite, case4, writeReg[1], writeReg[0]);
+	
+	and (regSelect[0], RegWrite, case5, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case5, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case5, writeReg[1], ~writeReg[0]);
+	and (regSelect[3], RegWrite, case5, writeReg[1], writeReg[0]);
+	
+	and (regSelect[0], RegWrite, case6, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case6, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case6, writeReg[1], ~writeReg[0]);
+	and (regSelect[3], RegWrite, case6, writeReg[1], writeReg[0]);
+	
+	and (regSelect[0], RegWrite, case7, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case7, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case7, writeReg[1], ~writeReg[0]);
+	and (regSelect[3], RegWrite, case7, writeReg[1], writeReg[0]);
+	
+	and (regSelect[0], RegWrite, case8, ~writeReg[1], ~writeReg[0]);
+	and (regSelect[1], RegWrite, case8, ~writeReg[1], writeReg[0]);
+	and (regSelect[2], RegWrite, case8, writeReg[1], ~writeReg[0]);
+
+
+endmodule
