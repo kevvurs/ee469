@@ -34,7 +34,7 @@ module mux32_1_testbench();
 	parameter delay = 10;
 	integer i;
 
-	Decoder dut (.in, .sel, .out);
+	mux32_1 dut (.in, .sel, .out);
 
  initial begin
 	in = 32'hF001AC93;  sel = 5'b00110; #delay;

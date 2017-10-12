@@ -4,18 +4,19 @@ vlib work
 # Compile Verilog
 #     All Verilog files that are part of this design should have
 #     their own "vlog" line below.
-vlog "./Mem_Create.sv"
-vlog "./Reg_File.sv"
+vlog "./mux2_1.sv"
+vlog "./dff.sv"
+vlog "./Reg_Create.sv"
 
 # Call vsim to invoke simulator
 #     Make sure the last item on the line is the name of the
 #     testbench module you want to execute.
-vsim -voptargs="+acc" -t 1ps -lib work Reg_File_testbench
+vsim -voptargs="+acc" -t 1ps -lib work Reg_Create_testbench
 
 # Source the wave do file
 #     This should be the file that sets up the signal window for
 #     the module you are testing.
-do Reg_File_wave.do
+do Reg_Create_wave.do
 
 # Set the window types
 view wave
