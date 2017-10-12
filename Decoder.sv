@@ -69,7 +69,7 @@ module Decoder_testbench();
 	logic [31:0] regSelect;
 	parameter delay = 10
 
-	Decoder dut (writeReg, RegWrite, regSelect);
+	Decoder dut (.writeReg, .RegWrite, .regSelect);
 
  initial begin
 	writeReg = 5'b0000; RegWrite = 1; #delay;
