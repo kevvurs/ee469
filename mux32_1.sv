@@ -1,3 +1,5 @@
+`timescale 1ns/10ps
+
 // Composite 32:1 mux implementation
 module mux32_1 #(parameter WIDTH=8, SUBWIDTH=2) (in, sel, out);
 	input logic [31:0] in;
