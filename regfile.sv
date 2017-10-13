@@ -19,7 +19,6 @@ module regfile(
 	logic [numReg-1:0][regSize-1:0] mem;
 	logic [numReg-1:0] enables;
 	logic reset;
-	logic RegWriteOut1, RegWriteOut2;
 	// Connect registers
 	Decoder
 		dec
