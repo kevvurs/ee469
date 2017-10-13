@@ -29,7 +29,7 @@ module mux32_1_testbench();
 	logic [4:0] sel;
 	logic out;
 
-	parameter delay = 10
+	parameter delay = 10;
 	integer i;
 
 	Decoder dut (.in, .sel, .out);
