@@ -1,3 +1,6 @@
+`timescale 1ns/10ps
+
+
 /* Top Level module
 	Connects all the components of the regfile
 	Provides ability to read from 2 registers simultanously
@@ -43,5 +46,61 @@ module regfile(
 		
 	
 
+endmodule
+
+module regfile_testbench();
+	parameter ClockDelay = 5000;
+
+	logic	[4:0] 	ReadRegister1, ReadRegister2, WriteRegister;
+	logic [63:0]	WriteData;
+	logic 			RegWrite, clk;
+	logic [63:0]	ReadData1, ReadData2;
+	
+	integer i;
+
+	regfile 
+		dut (
+			.ReadData1,
+			.ReadData2,
+			.WriteData, 
+			.ReadRegister1,
+			.ReadRegister2,
+			.WriteRegister,
+			.RegWrite,
+			.clk
+		);
+		
+	initial begin // Set up the clock
+		clk <= 0;
+		forever #(ClockDelay/2) clk <= ~clk;
+	end
+	
+	initial begin
+		RegWrite <= 5'd0;
+		ReadRegister1 <= 5'd0;
+		ReadRegister2 <= 5'd0;
+		WriteRegister <= 5'd31;
+		WriteData <= 64'h00000000000000A0;
+		@(posedge clk);
+		WriteData <= 64'hCAFEBABEDEADBEEF;
+		RegWrite <= 5'd1;
+		@(posedge clk);
+		WriteRegister <= 5'd0;
+		ReadRegister2 <= 5'd16;
+		@(posedge clk);
+		WriteData <= 64'hC0FFEE12380497CD;
+		WriteRegister <= 5'd16;
+		@(posedge clk);
+		assert (ReadData2 == WriteData);
+		RegWrite <= 5'd0;
+		ReadRegister1 <= 5'd5;
+		@(posedge clk);
+		WriteData <= 64'hCAFEBABEDEADBEEF;
+		@(posedge clk);
+		WriteRegister <= 5'd5;
+		RegWrite <= 5'd1;
+		@(posedge clk);
+		$stop;
+	end
 endmodule
 // EOF
