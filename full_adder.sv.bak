@@ -1,0 +1,15 @@
+module full_adder(cin, a, b, cout, sum);
+	output logic cout, sum;
+	input logic cin, a, b;
+	
+	logic sumNoCarry, cinCheck, inputCarryCheck;
+	
+	xor addAB (sumNoCarrry, a, b);
+	xor result (sum, cin, sumnoCarry);
+	and inputCheck (inputCarryCheck, a, b);
+	and cinCheckGate (cinCheck, cin, sumNoCarry);
+	or (cout, cinCheck, inputCarryCheck);
+	
+	
+endmodule
+

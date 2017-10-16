@@ -4,29 +4,17 @@ vlib work
 # Compile Verilog
 #     All Verilog files that are part of this design should have
 #     their own "vlog" line below.
-vlog "./regstim.sv"
-vlog "./regfile.sv"
-vlog "./mux_64by_32.sv"
-vlog "./mux32_1.sv"
-vlog "./mux4_1.sv"
-vlog "./mux2_1.sv"
-vlog "./Mem_Create.sv"
-vlog "./Reg_Create.sv"
-vlog "./dff.sv"
-vlog "./Decoder.sv"
-
-
-
-
+vlog "./Big64full_adder.sv"
+vlog "./full_adder.sv"
 # Call vsim to invoke simulator
 #     Make sure the last item on the line is the name of the
 #     testbench module you want to execute.
-vsim -voptargs="+acc" -t 1ps -lib work regstim
+vsim -voptargs="+acc" -t 1ps -lib work Big64full_adder_testbench
 
 # Source the wave do file
 #     This should be the file that sets up the signal window for
 #     the module you are testing.
-do regstim_wave.do
+do Big64full_adder_wave.do
 
 # Set the window types
 view wave
