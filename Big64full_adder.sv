@@ -24,13 +24,12 @@ module Big64full_adder_testbench();
 
 	 initial begin
 		
-		for (j=0; j<64'hFFFFFFFFFFFFFFFF; j++) begin
+		for (j=0; j < 100; j++) begin
 			a = j;
-			for (k=0; k<64'hFFFFFFFFFFFFFFFF; k++) begin
-				b = k; 
-				#10;
+			for (k=0; k < 100; k++) begin
+				b = k; #10;
 			end
 		end
-		$stop
+		$stop;
 	 end
 endmodule
