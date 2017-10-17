@@ -3,7 +3,7 @@
 module full_adder(cin, a, b, cout, sum);
 	output logic cout, sum;
 	input logic cin, a, b;
-	parameter delay = 0;
+	parameter delay = 5;
 
 	logic sumNoCarry, cinCheck, inputCarryCheck;
 	
@@ -28,6 +28,5 @@ module full_adder_testbench();
 	for (i=0; i<8; i++) begin
 		{cin, a, b} = i; #10;
 	end
-	
  end
 endmodule

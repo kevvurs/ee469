@@ -1,16 +1,13 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate /Big64full_adder_testbench/cout
-add wave -noupdate /Big64full_adder_testbench/sum
-add wave -noupdate /Big64full_adder_testbench/cin
-add wave -noupdate /Big64full_adder_testbench/a
-add wave -noupdate /Big64full_adder_testbench/b
-add wave -noupdate /Big64full_adder_testbench/j
-add wave -noupdate /Big64full_adder_testbench/k
+add wave -noupdate -color Blue -radix decimal /Big64full_adder_testbench/a
+add wave -noupdate -color Blue -radix decimal /Big64full_adder_testbench/b
+add wave -noupdate -color {Dark Orchid} -radix decimal /Big64full_adder_testbench/sum
+add wave -noupdate -color Gold /Big64full_adder_testbench/cout
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {0 ps} 0}
-quietly wave cursor active 0
-configure wave -namecolwidth 150
+WaveRestoreCursors {{Cursor 1} {107958899 ps} 0}
+quietly wave cursor active 1
+configure wave -namecolwidth 169
 configure wave -valuecolwidth 100
 configure wave -justifyvalue left
 configure wave -signalnamewidth 0
@@ -24,4 +21,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {1 ns}
+WaveRestoreZoom {107958899 ps} {108439155 ps}

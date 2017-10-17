@@ -22,10 +22,38 @@ module alu(A, B, cntrl, result, negative, zero, overflow, carry_out);
 	output logic [63:0] result;
 	output logic negative, zero, overflow, carry_out ;
 	
-	parameter delay = 100000;
+	// Internal signals
+	logic [63:0] add_sum;
+	logic [63:0] add_cout;
+	
+	logic [63:0] sub_sum;
+	
+	logic [63:0] and_out;
+	logic [63:0] _or_out;
+	logic [63:0] xor_out;
+	
+	parameter delay = 5;
 	parameter ALU_PASS_B=3'b000, ALU_ADD=3'b010, ALU_SUBTRACT=3'b011, ALU_AND=3'b100, ALU_OR=3'b101, ALU_XOR=3'b110;
 
-
-
+	// Deploy parameter to each OP.
+	Big64full_adder add (.a(A), .b(B), .cout(add_cout), .sum(add_sum));
+	
+	bw_and _and (.a(A), .b(B), .c(and_out));
+	bw_or _or (.a(A), .b(B), .c(_or_out));
+	
+	// Resolve output
+	Big64mux8_1 resolver (.out(result),
+		.in0(B),  			// 000
+		.in1(64'bX),		// 001
+		.in2(add_sum),		// 010
+		.in3(sub_sum),		// 011
+		.in4(and_out),		// 100
+		.in5(_or_out), 	// 101
+		.in6(xor_out),
+		.in7(64'bX),
+		.sel(cntrl));
+	
+	// Drive flags
+	and #delay overflowFlag (overflow, add_cout[62], add_cout[63]);
 
 endmodule
