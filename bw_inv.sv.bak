@@ -8,7 +8,7 @@ module bw_and(a, b, c);
 	genvar i;
 	generate
 		for (i=0; i<64; i++) begin : each
-			and #delay iAnd (c[i], a[i], b[i]);
+			inv #delay iInv (c[i], a[i], b[i]);
 		end
 	endgenerate
 endmodule
@@ -27,6 +27,6 @@ module bw_and_testbench();
 		a = 64'h0101010101010101;
 		b = 64'h1010101010101010;
 		#delay;
-		assert(c == 0);
+		assert(c == 64'b0);
 	end
 endmodule

@@ -25,6 +25,8 @@ module alu(A, B, cntrl, result, negative, zero, overflow, carry_out);
 	// Internal signals
 	logic [63:0] add_sum;
 	logic [63:0] add_cout;
+	logic [63:0] difference;
+	logic [63:0] sub_cout;
 	
 	logic [63:0] sub_sum;
 	
@@ -37,16 +39,18 @@ module alu(A, B, cntrl, result, negative, zero, overflow, carry_out);
 
 	// Deploy parameter to each OP.
 	Big64full_adder add (.a(A), .b(B), .cout(add_cout), .sum(add_sum));
+	Big64full_subtractor sub (.a(A), .b(B), .cout(sub_cout), .difference(difference));
 	
 	bw_and _and (.a(A), .b(B), .c(and_out));
-	bw_or _or (.a(A), .b(B), .c(_or_out));
+	bw_or  _or  (.a(A), .b(B), .c(_or_out));
+	bw_xor _xor (.a(A), .b(B), .c(xor_out));
 	
 	// Resolve output
 	Big64mux8_1 resolver (.out(result),
 		.in0(B),  			// 000
 		.in1(64'bX),		// 001
 		.in2(add_sum),		// 010
-		.in3(sub_sum),		// 011
+		.in3(difference),	// 011
 		.in4(and_out),		// 100
 		.in5(_or_out), 	// 101
 		.in6(xor_out),
