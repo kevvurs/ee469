@@ -48,7 +48,7 @@ module alustim();
 		
 		$display("%t testing addition", $time);
 		cntrl = ALU_ADD;
-		A = 64'h1110000000000001; B = 64'h1110000000000001;
+		A = 64'h0000000000000001; B = 64'h0000000000000001;
 		#(delay);
 		assert(result == 64'h0000000000000002 && carry_out == 0 && overflow == 0 && negative == 0 && zero == 0);
 		

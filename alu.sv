@@ -34,6 +34,8 @@ module alu(A, B, cntrl, result, negative, zero, overflow, carry_out);
 	logic [63:0] _or_out;
 	logic [63:0] xor_out;
 	
+	logic OverFlow1, OverFlow2;
+	
 	parameter delay = 5;
 	parameter ALU_PASS_B=3'b000, ALU_ADD=3'b010, ALU_SUBTRACT=3'b011, ALU_AND=3'b100, ALU_OR=3'b101, ALU_XOR=3'b110;
 
@@ -58,6 +60,17 @@ module alu(A, B, cntrl, result, negative, zero, overflow, carry_out);
 		.sel(cntrl));
 	
 	// Drive flags
-	and #delay overflowFlag (overflow, add_cout[62], add_cout[63]);
+	//and #delay overflowFlag (overflow, add_cout[62], add_cout[63]);
+	// Zero Flag Check
+	zeroFlagCheck CheckIfXero(.zeroFlagCheck(zero), .result(result));
+	// Negative Flag Check
+	assign negative = result[63];
+	// Overflow Flag Check
+	xor #delay additionOverFlow (OverFlow1, add_cout[63], add_cout[62]);
+	xor #delay subtractionOverFlow (OverFlow2, sub_cout[63], sub_cout[62]);
+	or #delay (overflow, OverFlow1, OverFlow2);
+	// Carry Flag Check
+	or #delay (carry_out, add_cout[63], sub_cout[63]);
+
 
 endmodule
