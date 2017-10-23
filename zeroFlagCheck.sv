@@ -36,7 +36,7 @@ module zeroFlagCheck_testbench();
 		#delay;
 		result = 64'h3C3C3C3C3C3C3C3C;
 		#delay;
-		result = 64'h0000000000000000;
+		result = 64'b1111111111111111111111111111111111111111111111111111111111111111;
 		#delay;
 	end
 endmodule
