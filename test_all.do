@@ -4,6 +4,7 @@ vlib work
 # Compile Verilog
 #     All Verilog files that are part of this design should have
 #     their own "vlog" line below.
+vlog "./zeroFlagCheck.sv"
 vlog "./full_adder.sv"
 vlog "./Big64full_adder.sv"
 vlog "./full-subtractor.sv"
