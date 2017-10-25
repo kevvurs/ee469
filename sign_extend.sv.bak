@@ -1,0 +1,14 @@
+module sign_extend #(parameter INNER_WIDTH=1, OUTER_WIDTH=2) (in, out);
+	input logic [INNER_WIDTH-1:0] in;
+	output logic [OUTER_WIDTH-1:0] out;
+
+	initial assert (INNER_WIDTH < OUTER_WIDTH)
+	
+	assign out[INNER_WIDTH-1:0] = in;
+	integer i;
+	always_comb begin
+		for (i=INNER_WIDTH; i<(OUTER_WIDTH); i+=1) begin
+			out[i] = in[INNER_WIDTH - 1];
+		end
+	end
+endmodule

@@ -1,14 +1,11 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate /full_subtractor_testbench/cout
-add wave -noupdate /full_subtractor_testbench/difference
-add wave -noupdate /full_subtractor_testbench/cin
-add wave -noupdate /full_subtractor_testbench/a
-add wave -noupdate /full_subtractor_testbench/b
+add wave -noupdate /sign_extend_testbench/in
+add wave -noupdate /sign_extend_testbench/out
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {0 ps} 0}
 quietly wave cursor active 0
-configure wave -namecolwidth 150
+configure wave -namecolwidth 304
 configure wave -valuecolwidth 100
 configure wave -justifyvalue left
 configure wave -signalnamewidth 0
@@ -22,4 +19,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {1 ns}
+WaveRestoreZoom {0 ps} {814 ps}
