@@ -1,0 +1,3 @@
+module instr_decoder(intstruction, UncondBr, BrTaken, Reg2Loc, RegWrite, ALUSrc. ALUOp, MemWrite);
+	
+endmodule

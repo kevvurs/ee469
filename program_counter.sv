@@ -89,5 +89,9 @@ module program_counter (
 		.sel(br_taken)
 	);
 	
-	assign progam_index = count_rd;
+	always_comb begin
+		if (reset) progam_index = 64'd0;
+		else progam_index = count_rd;
+	end
+	
 endmodule
