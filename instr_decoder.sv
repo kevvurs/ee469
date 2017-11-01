@@ -1,7 +1,11 @@
 module instr_decoder(instruction, UncondBr, BrTaken, Reg2Loc, RegWrite, ALUSrc, ALUOp, MemWrite);
 	input logic instruction;
 	output logic UncondBr, BrTaken, Reg2Loc,
-		RegWrite, ALUSrc, ALUOp, MemWrite;
+		RegWrite, ALUSrc, ALUOp, MemWrite, MemToReg;
+	output logic [8:0] DAddr9;
+	output logic [11:0] Imm12;
+	output logic shamt;
+	output logic Imm16;
 
 	parameter
 		// B-type

@@ -6,6 +6,20 @@ module cpu(reset, clk);
 	// Controls
 	logic UncondBr, BrTaken, Reg2Loc,
 		RegWrite, ALUSrc, ALUOp, MemWrite;
+	logic [8:0] Daddr9;
+	logic [11:0] Imm12;
+	logic [15:0] Imm16;
+	
+	logic [4:0] Rd, Rm, Rn, RegChoose;
+	
+	//5:2_1
+	mux2_1 #5 ChooseWhatInput (.out(RegChoose), .in0(Rd), .in1(Rm), .sel(Reg2Loc));  
+	
+	regfile(
+		.ReadData1(Da), .ReadData2(Db), .WriteData(), 
+		.ReadRegister1(Rn), .ReadRegister2(RegChoose), .WriteRegister(RegWrite),
+		.RegWrite, .clk(clk)
+	);
 	
 	program_counter(
 		.program_index(instr_addr),
