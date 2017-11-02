@@ -28,7 +28,7 @@ module cpu(reset, clk);
 		.uncondbr(UncondBr),
 		.br_taken(BrTaken),
 		.reset(reset),
-		.clk(clk),
+		.clk(clk)
 	);
 	
 	instructmem(
