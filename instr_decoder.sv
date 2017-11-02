@@ -22,7 +22,7 @@ module instr_decoder(instruction, ZeroFlag, UncondBr, BrTaken, Reg2Loc, RegWrite
 		//EQ = 8'b00000000,
 		//NE = 8'b00000001,
 		//GE = 8'b00001010,
-		//LT = 8'b00001011,
+		LT = 5'b01011,
 		//GT = 8'b00001100,
 		//LE = 8'b00001101,
 
@@ -63,169 +63,172 @@ module instr_decoder(instruction, ZeroFlag, UncondBr, BrTaken, Reg2Loc, RegWrite
 
 
 	always_comb
+
+		// Args
+		BrAddr26[25:0]  = instruction[25:0];
+		Imm12[11:0] = instruction[21:10];
+		shamt[6:0] = instruction[15:10];
+		Imm16[15:0] = instruction[21:10];
+		DAddr9[8:0] = instruction[20:12];
+
 		// B-type
 		case (instruction[31:26])
 			B: begin
-				UncondBr = 1;
-				BrTaken =  1;
+				UncondBr = 1'b1;
+				BrTaken =  1'b1;
 				Reg2Loc = 1'bx;
-				RegWrite = 0;
+				RegWrite = 1'b0;
 				ALUSrc = 1'bx;
-				ALUOp = 3'b000;
-				MemWrite = 0
-				MemToReg = 1'bx;
-				DAddr9[8:0] = 9'b000000000;
-				Imm12[11:0] = 12'b000000000000;
-				shamt = 6'b000000;
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];
+				ALUOp = 3'bxxx;
+				MemWrite = 1'b0;
+				MemToReg = 1'b0;
 			end
+
 			default:
-			
+
 				// CB-type
 				case (instruction[31:24])
-				BCond: begin
-				UncondBr = 0;
-				BrTaken =  ZeroFlag;
-				Reg2Loc = 0;
-				RegWrite = 0;
-				ALUSrc = 0;
-				ALUOp = 3'b000;
-				MemWrite = 0
-				MemToReg = 0;
-				DAddr9[8:0] = 9'b000000000;
-				Imm12[11:0] = 12'b000000000000;
-				shamt = 6'b00000;
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];		
-				end
-				
-				CBZ: begin
-				UncondBr = 0;
-				BrTaken =  ZeroFlag;
-				Reg2Loc = 0;
-				RegWrite = 0;
-				ALUSrc = 0;
-				ALUOp = 3'b000;
-				MemWrite = 0
-				MemToReg = 0;
-				DAddr9[8:0] = 9'b000000000;
-				Imm12[11:0] = 12'b000000000000;
-				shamt = 6'b00000;
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];		
-				end
-					default:
-						//R-type
-				case(instruction[31:21]) 
-				
-				ADDI: begin
-				UncondBr = 0;
-				BrTaken =  0;
-				Reg2Loc = 1;
-				RegWrite = 1;
-				ALUSrc = 0;
-				ALUOp = 3'b010;
-				MemWrite = 0
-				MemToReg = 0;
-				DAddr9[8:0] = 9'b000000000;
-				Imm12[11:0] = 12'b000000000000;
-				shamt = instruction[15:10];
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];	
-				end
-				
-				SUBS: begin
-				UncondBr = 0;
-				BrTaken =  0;
-				Reg2Loc = 1;
-				RegWrite = 1;
-				ALUSrc = 0;
-				ALUOp = 3'b011;
-				MemWrite = 0
-				MemToReg = 0;
-				DAddr9[8:0] = 9'b000000000;
-				Imm12[11:0] = 12'b000000000000;
-				shamt = instruction[15:10];
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];
-				end
-				default
-				
-				STURB: begin
-				UncondBr = 0;
-				BrTaken =  0;
-				Reg2Loc = 0;
-				RegWrite = 0;
-				ALUSrc = 1;
-				ALUOp = 3'b010;
-				MemWrite = 1
-				MemToReg = 0;
-				DAddr9[8:0] = instruction[20:12];
-				Imm12[11:0] = 12'b000000000000;
-				shamt = 6'b000000;
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];
-				end
-				
-				LDURB: begin
-				UncondBr = 0;
-				BrTaken =  0;
-				Reg2Loc = 0;
-				RegWrite = 0;
-				ALUSrc = 1;
-				ALUOp = 3'b010;
-				MemWrite = 1
-				MemToReg = 0;
-				DAddr9[8:0] = instruction[20:12];
-				Imm12[11:0] = 12'b000000000000;
-				shamt = 6'b000000;
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];
-				end
-				
-				STUR: begin
-				UncondBr = 0;
-				BrTaken =  0;
-				Reg2Loc = 0;
-				RegWrite = 0;
-				ALUSrc = 1;
-				ALUOp = 3'b010;
-				MemWrite = 1
-				MemToReg = 0;
-				DAddr9[8:0] = instruction[20:12];
-				Imm12[11:0] = 12'b000000000000;
-				shamt = 6'b000000;
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];
-				end
-				
-				LDUR:begin
-				UncondBr = 0;
-				BrTaken =  0;
-				Reg2Loc = 0;
-				RegWrite = 0;
-				ALUSrc = 1;
-				ALUOp = 3'b010;
-				MemWrite = 1
-				MemToReg = 0;
-				DAddr9[8:0] = instruction[20:12];
-				Imm12[11:0] = 12'b000000000000;
-				shamt = 6'b000000;
-				Imm16[15:0] = 16'b0000000000;
-				CondAddr19[18:0] = 19'b000000000000000000;
-				BrAddr26[25:0]  = instruction[25:0];
-				end
+					BCond:
+						case (instruction[4:0])
+							LT: begin
+								UncondBr = 1'b0;
+								BrTaken =  ZeroFlag;
+								Reg2Loc = 1'b0;
+								RegWrite = 1'b0;
+								ALUSrc = 1'b0;
+								ALUOp = 3'b000;
+								MemWrite = 1'b0;
+								MemToReg = 1'b0;
+							end
+
+							// no-op
+							default: begin
+								UncondBr = 1'bx;
+								BrTaken =  1'b0;
+								Reg2Loc = 1'bx;
+								RegWrite = 1'b0;
+								ALUSrc = 1'bx;
+								ALUOp = 3'bxxx;
+								MemWrite = 1'b0;
+								MemToReg = 1'bx;
+							end
+						endcase
+
+
+					CBZ: begin
+						UncondBr = 1'b0;
+						BrTaken =  ZeroFlag;
+						Reg2Loc = 1'b0;
+						RegWrite = 1'b0;
+						ALUSrc = 1'b0;
+						ALUOp = 3'b000;
+						MemWrite = 1'b0;
+						MemToReg = 1'b0;
+					end
 				default:
 
+					//R-type
+					case(instruction[31:21])
+
+						ADDS: begin
+							UncondBr = 1'b0;
+							BrTaken =  1'b0;
+							Reg2Loc = 1'b1;
+							RegWrite = 1'b0;
+							ALUSrc = 1'b0;
+							ALUOp = 3'b010;
+							MemWrite = 1'b0;
+							MemToReg = 1'b0;
+						end
+
+						SUBS: begin
+							UncondBr = 1'b0;
+							BrTaken =  1'b0;
+							Reg2Loc = 1'b1;
+							RegWrite = 1'b0;
+							ALUSrc = 1'b0;
+							ALUOp = 3'b011;
+							MemWrite = 1'b0;
+							MemToReg = 1'b0;
+						end
+
+						default:
+
+							// D-type
+							case (instruction[31:21])
+
+								STURB: begin
+									UncondBr = 1'b0;
+									BrTaken =  1'b0;
+									Reg2Loc = 1'b0;
+									RegWrite = 1'b0;
+									ALUSrc = 1'b1;
+									ALUOp = 3'b010;
+									MemWrite = 1'b1
+									MemToReg = 1'b0;
+								end
+
+								LDURB: begin
+									UncondBr = 1'b0;
+									BrTaken =  1'b0;
+									Reg2Loc = 1'b0;
+									RegWrite = 1'b0;
+									ALUSrc = 1'b1;
+									ALUOp = 3'b010;
+									MemWrite = 1'b1
+									MemToReg = 1'b0;
+								end
+
+								STUR: begin
+									UncondBr = 1'b0;
+									BrTaken =  1'b0;
+									Reg2Loc = 1'b0;
+									RegWrite = 1'b0;
+									ALUSrc = 1'b1;
+									ALUOp = 3'b010;
+									MemWrite = 1'b1
+									MemToReg = 1'b0;
+								end
+
+								LDUR:begin
+									UncondBr = 1'b0;
+									BrTaken =  1'b0;
+									Reg2Loc = 1'b0;
+									RegWrite = 1'b0;
+									ALUSrc = 1'b1;
+									ALUOp = 3'b010;
+									MemWrite = 1'b1
+									MemToReg = 1'b0;
+								end
+							default:
+
+							// I-type
+							case (instruction[31:22])
+
+								ADDI: begin
+									UncondBr = 1'bx;
+									BrTaken =  1'b0;
+									Reg2Loc = 1'b0;
+									RegWrite = 1'b1;
+									ALUSrc = 1'b1;
+									ALUOp = 3'b010;
+									MemWrite = 1'b0;
+									MemToReg = 1'b0;
+								end
+							default:
+
+								case (instruction[31:23])
+									MOVK: begin
+										//
+									end
+
+									MOVZ: begin
+										// 
+									end
+
+								endcase
+							endcase
+					endcase
 				endcase
 		endcase
 endmodule
