@@ -90,8 +90,8 @@ module program_counter (
 	);
 	
 	always_comb begin
-		if (reset) progam_index = 64'd0;
-		else progam_index = count_rd;
+		if (reset) program_index = 64'd0;
+		else program_index = count_rd;
 	end
 	
 endmodule
