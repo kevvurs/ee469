@@ -1,4 +1,14 @@
-module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, RegWrite, ALUSrc, ALUOp, MemWrite);
+module instr_decoder(instruction,
+	ZeroFlag, flags,
+	UncondBr, BrTaken,
+	Reg2Loc, RegWrite,
+	ALUSrc, ALUOp, CmpMode,
+	MemWrite,
+	DAddr9, Imm12, shamt, Imm16,
+	CondAddr19, BrAddr26
+	// TODO: add Rn, Rm, Rd
+);
+
 	input logic instruction;
 
 	// Controllers
@@ -19,6 +29,7 @@ module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, R
 	input logic ZeroFlag;  		// Fast
 	input logic [3:0] flags;  // Previous
 
+	logic lessThan;
 
 	parameter
 		// B-type
@@ -71,7 +82,9 @@ module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, R
 
 
 
-	always_comb
+	always_comb begin
+
+		// Commands here act as global defaults
 
 		// Args
 		BrAddr26[25:0]  = instruction[25:0];
@@ -79,6 +92,11 @@ module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, R
 		shamt[6:0] = instruction[15:10];
 		Imm16[15:0] = instruction[21:10];
 		DAddr9[8:0] = instruction[20:12];
+
+		CmpMode = 1'b0;
+
+		xor notEqual (lessThan, flags[3], flags[1]);
+		// Decoder block:
 
 		// B-type
 		case (instruction[31:26])
@@ -101,7 +119,7 @@ module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, R
 						case (instruction[4:0])
 							LT: begin
 								UncondBr = 1'b0;
-								BrTaken =  ZeroFlag;
+								BrTaken =  lessThan;
 								Reg2Loc = 1'b0;
 								RegWrite = 1'b0;
 								ALUSrc = 1'b0;
@@ -148,6 +166,7 @@ module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, R
 							ALUOp = 3'b010;
 							MemWrite = 1'b0;
 							MemToReg = 1'b0;
+							CmpMode = 1'b1;
 						end
 
 						SUBS: begin
@@ -159,6 +178,7 @@ module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, R
 							ALUOp = 3'b011;
 							MemWrite = 1'b0;
 							MemToReg = 1'b0;
+							CmpMode = 1'b1;
 						end
 
 						default:
@@ -266,4 +286,5 @@ module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, R
 					endcase
 				endcase
 		endcase
+	end
 endmodule
