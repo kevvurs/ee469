@@ -1,10 +1,10 @@
 `timescale 1ns/10ps
 
-module n_mux2_1 parameter #(parameter MUXSIZE = 2) (out, in0, in1, sel);
+module n_mux2_1 #(parameter MUXSIZE = 2) (out, in0, in1, sel);
 	input logic sel;
 	input logic [MUXSIZE - 1:0] in0, in1;
 	output logic [MUXSIZE - 1:0] out;
-	
+
 	genvar i;
 	generate
 		for (i=0; i<MUXSIZE; i+=1) begin : each

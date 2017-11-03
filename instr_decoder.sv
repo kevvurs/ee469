@@ -1,15 +1,24 @@
-module instr_decoder(instruction, ZeroFlag, UncondBr, BrTaken, Reg2Loc, RegWrite, ALUSrc, ALUOp, MemWrite);
+module instr_decoder(instruction, ZeroFlag, flags, UncondBr, BrTaken, Reg2Loc, RegWrite, ALUSrc, ALUOp, MemWrite);
 	input logic instruction;
-	input logic ZeroFlag;
+
+	// Controllers
 	output logic UncondBr, BrTaken, Reg2Loc,
-		RegWrite, ALUSrc , MemWrite, MemToReg;
+		RegWrite, ALUSrc , MemWrite, MemToReg,
+		CmpMode;
 	output logic [2:0] ALUOp;
+
+	// Instruction args
 	output logic [8:0] DAddr9;
 	output logic [11:0] Imm12;
 	output logic [6:0] shamt;
 	output logic [15:0] Imm16;
 	output logic [18:0] CondAddr19;
 	output logic [25:0] BrAddr26;
+
+	// ALU flags
+	input logic ZeroFlag;  		// Fast
+	input logic [3:0] flags;  // Previous
+
 
 	parameter
 		// B-type
@@ -217,7 +226,7 @@ module instr_decoder(instruction, ZeroFlag, UncondBr, BrTaken, Reg2Loc, RegWrite
 								end
 							default:
 
-								// MOV
+								// TODO: MOV
 								case (instruction[31:23])
 									MOVK: begin
 										UncondBr = 1'bx;
