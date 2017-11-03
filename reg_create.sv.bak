@@ -14,7 +14,7 @@ module Reg_Create #(parameter WIDTH=64) (q, in, en, reset, clk);
 	genvar i;
 	generate
 		for(i=0; i<WIDTH; i++) begin : eachDff       
-			D_FF df (.q(q[i]),  .d(d[i]), .reset(reset),  .clk);
+			d_ff D_FF (.q(q[i]),  .d(d[i]), .reset(reset),  .clk);
 		end   
 	endgenerate	
 	

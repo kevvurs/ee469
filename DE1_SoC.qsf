@@ -668,6 +668,9 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[6]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_R[7]
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_SYNC_N
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to VGA_VS
+set_global_assignment -name SYSTEMVERILOG_FILE Reg_Create.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Mem_Create.sv
+set_global_assignment -name SYSTEMVERILOG_FILE Decoder.sv
 set_global_assignment -name SYSTEMVERILOG_FILE regfile.sv
 set_global_assignment -name SYSTEMVERILOG_FILE inv.sv
 set_global_assignment -name SYSTEMVERILOG_FILE math.sv

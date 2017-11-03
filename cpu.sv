@@ -5,11 +5,12 @@ module cpu(reset, clk);
 
 	// Controls
 	logic UncondBr, BrTaken, Reg2Loc,
-		RegWrite, ALUSrc, ALUOp, MemWrite,
+		RegWrite, ALUSrc, MemWrite,
 		CmpMode, ImmInstr, ByteOrFull, MemToReg, DataMemRead;
 
 	// instr. args
-	logic [8:0] Daddr9;
+	logic [2:0] ALUOp;
+	logic [8:0] DAddr9;
 	logic [11:0] Imm12;
 	logic [15:0] Imm16;
 	logic [6:0] shamt;
@@ -95,7 +96,7 @@ module cpu(reset, clk);
 	);
 	
 	sign_extend #(9, 64) extDaddr(
-		.in(Daddr9),
+		.in(DAddr9),
 		.out(Daddr64)
 	);
 	

@@ -10,7 +10,7 @@ module instr_decoder(instruction,
 	// TODO: add Rn, Rm, Rd
 );
 
-	input logic instruction;
+	input logic [31:0] instruction;
 
 	// Controllers
 	output logic UncondBr, BrTaken, Reg2Loc,
@@ -70,7 +70,7 @@ module instr_decoder(instruction,
 		Imm12 = instruction[21:10];
 		shamt = instruction[15:10];
 		Imm16 = instruction[21:10];
-		aDAddr9 = instruction[20:12];
+		DAddr9 = instruction[20:12];
 
 		CmpMode = 1'b0;
 		ImmInstr = 1'b0;
