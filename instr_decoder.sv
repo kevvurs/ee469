@@ -217,15 +217,41 @@ module instr_decoder(instruction, ZeroFlag, UncondBr, BrTaken, Reg2Loc, RegWrite
 								end
 							default:
 
+								// MOV
 								case (instruction[31:23])
 									MOVK: begin
-										//
+										UncondBr = 1'bx;
+										BrTaken =  1'bx;
+										Reg2Loc = 1'bx;
+										RegWrite = 1'bx;
+										ALUSrc = 1'bx;
+										ALUOp = 3'bxxx;
+										MemWrite = 1'bx;
+										MemToReg = 1'bx;
 									end
 
 									MOVZ: begin
-										// 
+										UncondBr = 1'bx;
+										BrTaken =  1'bx;
+										Reg2Loc = 1'bx;
+										RegWrite = 1'bx;
+										ALUSrc = 1'bx;
+										ALUOp = 3'bxxx;
+										MemWrite = 1'bx;
+										MemToReg = 1'bx;
 									end
 
+									// WC no-op
+									default: begin
+										UncondBr = 1'bx;
+										BrTaken =  1'b0;
+										Reg2Loc = 1'bx;
+										RegWrite = 1'b0;
+										ALUSrc = 1'bx;
+										ALUOp = 3'bxxx;
+										MemWrite = 1'b0;
+										MemToReg = 1'bx;
+									end
 								endcase
 							endcase
 					endcase
