@@ -166,7 +166,7 @@ module cpu(reset, clk);
 	);
 
 
-	Reg_Create #4 FlagRegister(
+	Reg_Create #(4) FlagRegister(
 		.q(flags),
 		.in({negative, zero, overflow, carry_out}),
 		.en(CmpMode),
