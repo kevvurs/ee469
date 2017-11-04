@@ -1,45 +1,427 @@
 # Reading C:/intelFPGA/17.0/modelsim_ase/tcl/vsim/pref.tcl
-do test_sign_extend.do
-# ** Warning: (vlib-34) Library already exists at "work".
+do test_transposer.do
 # Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 11:52:42 on Oct 25,2017
-# vlog -reportprogress 300 ./sign_extend.sv 
-# -- Compiling module sign_extend
-# -- Compiling module sign_extend_testbench
+# Start time: 18:05:57 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
 # 
 # Top level modules:
-# 	sign_extend_testbench
-# End time: 11:52:42 on Oct 25,2017, Elapsed time: 0:00:00
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 18:05:57 on Nov 03,2017, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# vsim -voptargs=""+acc"" -t 1ps -lib work sign_extend_testbench 
-# Start time: 11:52:42 on Oct 25,2017
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:05:57 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 18:05:57 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:05:57 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# ** Error: (vlog-13051) ./transposer.sv(55): near "01010": Illegal digit for specified base in numeric constant.
+# ** Error: (vlog-13051) ./transposer.sv(56): Illegal digit for specified base in numeric constant.
+# ** Error: (vlog-13051) ./transposer.sv(61): Illegal digit for specified base in numeric constant.
+# ** Error: (vlog-13051) ./transposer.sv(67): near "000": Illegal digit for specified base in numeric constant.
+# ** Error: (vlog-13051) ./transposer.sv(68): Illegal digit for specified base in numeric constant.
+# End time: 18:05:57 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 5, Warnings: 0
+# ** Error: C:/intelFPGA/17.0/modelsim_ase/win32aloem/vlog failed.
+# Error in macro ./test_transposer.do line 9
+# C:/intelFPGA/17.0/modelsim_ase/win32aloem/vlog failed.
+#     while executing
+# "vlog "./transposer.sv""
+do test_transposer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:06:55 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
+# 
+# Top level modules:
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 18:06:55 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:06:55 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 18:06:55 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:06:55 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# 
+# Top level modules:
+# 	transposer_testbench
+# End time: 18:06:55 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim -voptargs=""+acc"" -t 1ps -lib work transposer_testbench 
+# Start time: 18:06:55 on Nov 03,2017
 # Loading sv_std.std
-# Loading work.sign_extend_testbench
-# Loading work.sign_extend
+# Loading work.transposer_testbench
+# Loading work.transposer
+# Loading work.prepend
+# Loading work.shifter
+# ** Warning: (vsim-3015) ./transposer.sv(20): [PCDPC] - Port size (1) does not match connection size (32) for port 'direction'. The port definition is at: ./math.sv(35).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/x16 File: ./math.sv
+# ** Warning: (vsim-3015) ./transposer.sv(35): [PCDPC] - Port size (1) does not match connection size (32) for port 'direction'. The port definition is at: ./math.sv(35).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/lsl File: ./math.sv
+# ** Warning: (vsim-3015) ./transposer.sv(35): [PCDPC] - Port size (6) does not match connection size (64) for port 'distance'. The port definition is at: ./math.sv(36).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/lsl File: ./math.sv
+add wave -position end  sim:/transposer_testbench/data
+# ** Error: Cannot open macro file: transposer_wave.do
+# Error in macro ./test_transposer.do line 19
+# Cannot open macro file: transposer_wave.do
+#     while executing
+# "do transposer_wave.do"
+add wave -position end  sim:/transposer_testbench/fixed
+add wave -position end  sim:/transposer_testbench/shamt
+add wave -position end  sim:/transposer_testbench/out
+write format wave -window .main_pane.wave.interior.cs.body.pw.wf C:/Users/caravk/ee469/transposer_wave.do
+do test_transposer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:09:16 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
+# 
+# Top level modules:
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 18:09:16 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:09:16 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 18:09:16 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:09:16 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# 
+# Top level modules:
+# 	transposer_testbench
+# End time: 18:09:16 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# End time: 18:09:17 on Nov 03,2017, Elapsed time: 0:02:22
+# Errors: 3, Warnings: 3
+# vsim -voptargs=""+acc"" -t 1ps -lib work transposer_testbench 
+# Start time: 18:09:17 on Nov 03,2017
+# Loading sv_std.std
+# Loading work.transposer_testbench
+# Loading work.transposer
+# Loading work.prepend
+# Loading work.shifter
+# ** Warning: (vsim-3015) ./transposer.sv(20): [PCDPC] - Port size (1) does not match connection size (32) for port 'direction'. The port definition is at: ./math.sv(35).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/x16 File: ./math.sv
+# ** Warning: (vsim-3015) ./transposer.sv(35): [PCDPC] - Port size (1) does not match connection size (32) for port 'direction'. The port definition is at: ./math.sv(35).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/lsl File: ./math.sv
+# ** Warning: (vsim-3015) ./transposer.sv(35): [PCDPC] - Port size (6) does not match connection size (64) for port 'distance'. The port definition is at: ./math.sv(36).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/lsl File: ./math.sv
 # .main_pane.wave.interior.cs.body.pw.wf
 # .main_pane.structure.interior.cs.body.struct
 # .main_pane.objects.interior.cs.body.tree
-do test_sign_extend.do
+add wave -position 3  sim:/transposer_testbench/clear
+write format wave -window .main_pane.wave.interior.cs.body.pw.wf C:/Users/caravk/ee469/transposer_wave.do
+do test_transposer.do
 # ** Warning: (vlib-34) Library already exists at "work".
 # Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
-# Start time: 11:53:26 on Oct 25,2017
-# vlog -reportprogress 300 ./sign_extend.sv 
-# -- Compiling module sign_extend
-# -- Compiling module sign_extend_testbench
+# Start time: 18:11:36 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
 # 
 # Top level modules:
-# 	sign_extend_testbench
-# End time: 11:53:26 on Oct 25,2017, Elapsed time: 0:00:00
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 18:11:36 on Nov 03,2017, Elapsed time: 0:00:00
 # Errors: 0, Warnings: 0
-# End time: 11:53:27 on Oct 25,2017, Elapsed time: 0:00:45
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:11:36 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 18:11:37 on Nov 03,2017, Elapsed time: 0:00:01
 # Errors: 0, Warnings: 0
-# vsim -voptargs=""+acc"" -t 1ps -lib work sign_extend_testbench 
-# Start time: 11:53:27 on Oct 25,2017
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:11:37 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# 
+# Top level modules:
+# 	transposer_testbench
+# End time: 18:11:37 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# End time: 18:11:38 on Nov 03,2017, Elapsed time: 0:02:21
+# Errors: 0, Warnings: 3
+# vsim -voptargs=""+acc"" -t 1ps -lib work transposer_testbench 
+# Start time: 18:11:38 on Nov 03,2017
 # Loading sv_std.std
-# Loading work.sign_extend_testbench
-# Loading work.sign_extend
+# Loading work.transposer_testbench
+# Loading work.transposer
+# Loading work.prepend
+# Loading work.shifter
+# ** Warning: (vsim-3015) ./transposer.sv(35): [PCDPC] - Port size (6) does not match connection size (64) for port 'distance'. The port definition is at: ./math.sv(36).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/lsl File: ./math.sv
 # .main_pane.wave.interior.cs.body.pw.wf
 # .main_pane.structure.interior.cs.body.struct
 # .main_pane.objects.interior.cs.body.tree
-# End time: 11:53:37 on Oct 25,2017, Elapsed time: 0:00:10
+do test_transposer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:13:25 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
+# 
+# Top level modules:
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 18:13:25 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:13:25 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 18:13:25 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:13:25 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# 
+# Top level modules:
+# 	transposer_testbench
+# End time: 18:13:25 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# End time: 18:13:27 on Nov 03,2017, Elapsed time: 0:01:49
+# Errors: 0, Warnings: 1
+# vsim -voptargs=""+acc"" -t 1ps -lib work transposer_testbench 
+# Start time: 18:13:27 on Nov 03,2017
+# Loading sv_std.std
+# Loading work.transposer_testbench
+# Loading work.transposer
+# Loading work.prepend
+# Loading work.shifter
+# ** Warning: (vsim-3015) ./transposer.sv(38): [PCDPC] - Port size (6) does not match connection size (64) for port 'distance'. The port definition is at: ./math.sv(36).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/lsl File: ./math.sv
+# .main_pane.wave.interior.cs.body.pw.wf
+# .main_pane.structure.interior.cs.body.struct
+# .main_pane.objects.interior.cs.body.tree
+do test_transposer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:15:11 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
+# 
+# Top level modules:
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 18:15:11 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:15:11 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 18:15:11 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 18:15:11 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# 
+# Top level modules:
+# 	transposer_testbench
+# End time: 18:15:11 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# End time: 18:15:13 on Nov 03,2017, Elapsed time: 0:01:46
+# Errors: 0, Warnings: 1
+# vsim -voptargs=""+acc"" -t 1ps -lib work transposer_testbench 
+# Start time: 18:15:13 on Nov 03,2017
+# Loading sv_std.std
+# Loading work.transposer_testbench
+# Loading work.transposer
+# Loading work.prepend
+# Loading work.shifter
+# ** Warning: (vsim-3015) ./transposer.sv(38): [PCDPC] - Port size (6) does not match connection size (64) for port 'distance'. The port definition is at: ./math.sv(36).
+#    Time: 0 ps  Iteration: 0  Instance: /transposer_testbench/dut/lsl File: ./math.sv
+# .main_pane.wave.interior.cs.body.pw.wf
+# .main_pane.structure.interior.cs.body.struct
+# .main_pane.objects.interior.cs.body.tree
+do test_transposer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:53:52 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
+# 
+# Top level modules:
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 20:53:52 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:53:52 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 20:53:52 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:53:52 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# ** Error: (vlog-13069) ./transposer.sv(53): near "end": syntax error, unexpected end, expecting ';'.
+# ** Error: ./transposer.sv(65): Illegal declaration after the statement near line '48'.  Declarations must precede statements.  Look for stray semicolons.
+# End time: 20:53:52 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 2, Warnings: 0
+# ** Error: C:/intelFPGA/17.0/modelsim_ase/win32aloem/vlog failed.
+# Error in macro ./test_transposer.do line 9
+# C:/intelFPGA/17.0/modelsim_ase/win32aloem/vlog failed.
+#     while executing
+# "vlog "./transposer.sv""
+do test_transposer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:54:11 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
+# 
+# Top level modules:
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 20:54:11 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:54:11 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 20:54:11 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:54:11 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# 
+# Top level modules:
+# 	transposer_testbench
+# End time: 20:54:11 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# End time: 20:54:17 on Nov 03,2017, Elapsed time: 2:39:04
+# Errors: 5, Warnings: 1
+# vsim -voptargs=""+acc"" -t 1ps -lib work transposer_testbench 
+# Start time: 20:54:17 on Nov 03,2017
+# Loading sv_std.std
+# Loading work.transposer_testbench
+# Loading work.transposer
+# Loading work.prepend
+# Loading work.shifter
+# .main_pane.wave.interior.cs.body.pw.wf
+# .main_pane.structure.interior.cs.body.struct
+# .main_pane.objects.interior.cs.body.tree
+do test_transposer.do
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:55:14 on Nov 03,2017
+# vlog -reportprogress 300 ./math.sv 
+# -- Compiling module mult
+# -- Compiling module shifter
+# -- Compiling module shifter_testbench
+# -- Compiling module mult_testbench
+# 
+# Top level modules:
+# 	shifter_testbench
+# 	mult_testbench
+# End time: 20:55:14 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:55:14 on Nov 03,2017
+# vlog -reportprogress 300 ./prepend.sv 
+# -- Compiling module prepend
+# 
+# Top level modules:
+# 	prepend
+# End time: 20:55:14 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vlog 10.5b Compiler 2016.10 Oct  5 2016
+# Start time: 20:55:14 on Nov 03,2017
+# vlog -reportprogress 300 ./transposer.sv 
+# -- Compiling module transposer
+# -- Compiling module transposer_testbench
+# 
+# Top level modules:
+# 	transposer_testbench
+# End time: 20:55:14 on Nov 03,2017, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# End time: 20:55:16 on Nov 03,2017, Elapsed time: 0:00:59
+# Errors: 0, Warnings: 0
+# vsim -voptargs=""+acc"" -t 1ps -lib work transposer_testbench 
+# Start time: 20:55:16 on Nov 03,2017
+# Loading sv_std.std
+# Loading work.transposer_testbench
+# Loading work.transposer
+# Loading work.prepend
+# Loading work.shifter
+# .main_pane.wave.interior.cs.body.pw.wf
+# .main_pane.structure.interior.cs.body.struct
+# .main_pane.objects.interior.cs.body.tree
+# End time: 20:55:25 on Nov 03,2017, Elapsed time: 0:00:09
 # Errors: 0, Warnings: 0
