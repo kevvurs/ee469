@@ -1,0 +1,8 @@
+module <name> (<netlist>);
+  <def_ports>
+
+endmodule
+
+module <name>_testbench();
+
+endmodule

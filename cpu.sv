@@ -6,20 +6,21 @@ module cpu(reset, clk);
 	// Controls
 	logic UncondBr, BrTaken, Reg2Loc,
 		RegWrite, ALUSrc, MemWrite,
-		CmpMode, ImmInstr, ByteOrFull, MemToReg, DataMemRead;
+		CmpMode, ImmInstr, ByteOrFull, MemToReg,
+		DataMemRead, clear, mov;
 
 	// instr. args
 	logic [2:0] ALUOp;
 	logic [8:0] DAddr9;
 	logic [11:0] Imm12;
 	logic [15:0] Imm16;
-	logic [6:0] shamt;
+	logic [1:0] shamt;
 	logic [18:0] CondAddr19;
 	logic [25:0] BrAddr26;
 
 	// Extended args
 	logic [63:0] Imm64, Daddr64;
-	
+
 	// Addr's
 	logic [4:0] Rd, Rm, Rn, RegChoose;
 
@@ -28,13 +29,16 @@ module cpu(reset, clk);
 	logic [3:0] flags;
 	logic negative, zero, overflow, carry_out;
 	logic [63:0] ALUResult, addArg, constArg;
-	
+
 	// Choose memData controls
 	logic [3:0] size;
 	logic [63:0] ReadDataMem;
-	
+
 	// Final Data being written
 	logic [63:0] WriteData;
+
+	// mov
+	logic [63:0] inserted, aluOut;
 
 	program_counter PC(
 		.program_index(instr_addr),
@@ -73,7 +77,12 @@ module cpu(reset, clk);
 		.BrAddr26,
 		.ByteOrFull,
 		.DataMemRead,
-		.MemToReg
+		.MemToReg,
+		.Rn,
+		.Rm,
+		.Rd,
+		.clear,
+		.mov
 	);
 
 	// Proceccinfg block
@@ -94,24 +103,24 @@ module cpu(reset, clk);
 		.RegWrite(RegWrite),
 		.clk(clk)
 	);
-	
+
 	sign_extend #(9, 64) extDaddr(
 		.in(DAddr9),
 		.out(Daddr64)
 	);
-	
+
 	sign_extend #(12, 64) extImm12(
 		.in(Imm12),
 		.out(Imm64)
 	);
-	
+
 	Big64mux2_1 ChooseConstant(
 		.out(constArg),
 		.in0(Daddr64),
 		.in1(Imm12),
 		.sel(ImmInstr)
 	);
-	
+
 	Big64mux2_1 ChooseConstantOrDb(
 		.out(addArg),
 		.in0(Db),
@@ -129,7 +138,7 @@ module cpu(reset, clk);
 		.overflow,
 		.carry_out
 	);
-	
+
 	// Decides transfer amount
 	n_mux2_1 #4 TransferAmt(
 		.out(size),
@@ -137,7 +146,7 @@ module cpu(reset, clk);
 		.in1(4'b0001),
 		.sel(ByteOrFull)
 	);
-	
+
 
 	datamem dataMemory(
 	.address(ALUResult),
@@ -148,14 +157,14 @@ module cpu(reset, clk);
 	.xfer_size(size),
 	.read_data(ReadDataMem)
 	);
-	
+
 	Big64mux2_1 RegWriteDataMux(
 		.out(WriteData),
 		.in0(ALUResult),
 		.in1(ReadDataMem),
 		.sel(MemToReg)
 	);
-	
+
 
 	Reg_Create #4 FlagRegister(
 		.q(flags),
@@ -165,6 +174,20 @@ module cpu(reset, clk);
 		.clk(clk)
 	);
 
+	transposer mov(
+		.data(Db),
+		.fixed(Imm16),
+		.shamt(shamt),
+		.clear(clear),
+		.out(inserted)
+	);
+
+	Big64mux2_1 aluMux(
+		.out(aluOut),
+		.in0(ALUResult),
+		.in1(inserted),
+		.sel(mov)
+	);
 
 
 endmodule

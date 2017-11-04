@@ -6,8 +6,9 @@ module instr_decoder(instruction,
 	MemWrite, MemToReg,
 	DAddr9, Imm12, shamt, Imm16,
 	CondAddr19, BrAddr26,
-	ImmInstr, ByteOrFull, DataMemRead
-	// TODO: add Rn, Rm, Rd
+	ImmInstr, ByteOrFull, DataMemRead,
+	Rn, Rm, Rd,
+	clear, mov
 );
 
 	input logic [31:0] instruction;
@@ -15,13 +16,17 @@ module instr_decoder(instruction,
 	// Controllers
 	output logic UncondBr, BrTaken, Reg2Loc,
 		RegWrite, ALUSrc , MemWrite, MemToReg,
-		CmpMode, ImmInstr, ByteOrFull, DataMemRead;
+		CmpMode, ImmInstr, ByteOrFull, DataMemRead,
+		clear, mov;
 	output logic [2:0] ALUOp;
+
+	// Reg addr
+	output logic [4:0] Rn, Rm, Rd
 
 	// Instruction args
 	output logic [8:0] DAddr9;
 	output logic [11:0] Imm12;
-	output logic [6:0] shamt;
+	output logic [1:0] shamt;
 	output logic [15:0] Imm16;
 	output logic [18:0] CondAddr19;
 	output logic [25:0] BrAddr26;
@@ -64,24 +69,30 @@ module instr_decoder(instruction,
 
 	always_comb begin
 
+		Rd = instruction[4:0];
+		Rn = instruction[9:5];
+		Rm = instruction[20:16];
+
 		// Commands here act as global defaults
 		// Args
 		BrAddr26 = instruction[25:0];
 		Imm12 = instruction[21:10];
-		shamt = instruction[15:10];
+		// TODO: shamt = instruction[15:10];
 		Imm16 = instruction[21:10];
 		DAddr9 = instruction[20:12];
 
 		CmpMode = 1'b0;
 		ImmInstr = 1'b0;
-		DataMemRead = 1;
-		MemToReg = 0;
+		DataMemRead = 1'b1;
+		MemToReg = 1'b0;
+
+		clear = 1'b0;
+		mov = 1'b0;
+
 		// If store or load 1 byte then true, false when full load or store
 		ByteOrFull = 1'b0;
 
-		//xor notEqual(lessThan, flags[3], flags[1]);
 		// Decoder block:
-
 		// B-type
 		case (instruction[31:26])
 			B: begin
@@ -137,7 +148,7 @@ module instr_decoder(instruction,
 						MemToReg = 1'b0;
 					end
 				default:
-					
+
 					//R-type
 					case(instruction[31:21])
 
@@ -232,14 +243,15 @@ module instr_decoder(instruction,
 									MemToReg = 1'b0;
 									ImmInstr = 1'b1;
 								end
-							default:
+							default: begin
+								mov = 1'b1;
 
 								// TODO: MOV
 								case (instruction[31:23])
 									MOVK: begin
 										UncondBr = 1'bx;
 										BrTaken =  1'bx;
-										Reg2Loc = 1'bx;
+										Reg2Loc = 1'b0;
 										RegWrite = 1'bx;
 										ALUSrc = 1'bx;
 										ALUOp = 3'bxxx;
@@ -256,6 +268,7 @@ module instr_decoder(instruction,
 										ALUOp = 3'bxxx;
 										MemWrite = 1'bx;
 										MemToReg = 1'bx;
+										clear = 1'b1;
 									end
 
 									// WC no-op
@@ -270,6 +283,7 @@ module instr_decoder(instruction,
 										MemToReg = 1'bx;
 									end
 								endcase
+							end
 							endcase
 					endcase
 				endcase
