@@ -21,7 +21,7 @@ module instr_decoder(instruction,
 	output logic [2:0] ALUOp;
 
 	// Reg addr
-	output logic [4:0] Rn, Rm, Rd
+	output logic [4:0] Rn, Rm, Rd;
 
 	// Instruction args
 	output logic [8:0] DAddr9;
@@ -83,7 +83,7 @@ module instr_decoder(instruction,
 
 		CmpMode = 1'b0;
 		ImmInstr = 1'b0;
-		DataMemRead = 1'b1;
+		DataMemRead = 1'b0;
 		MemToReg = 1'b0;
 
 		clear = 1'b0;
@@ -156,7 +156,7 @@ module instr_decoder(instruction,
 							UncondBr = 1'b0;
 							BrTaken =  1'b0;
 							Reg2Loc = 1'b1;
-							RegWrite = 1'b0;
+							RegWrite = 1'b1;
 							ALUSrc = 1'b0;
 							ALUOp = 3'b010;
 							MemWrite = 1'b0;
@@ -168,7 +168,7 @@ module instr_decoder(instruction,
 							UncondBr = 1'b0;
 							BrTaken =  1'b0;
 							Reg2Loc = 1'b1;
-							RegWrite = 1'b0;
+							RegWrite = 1'b1;
 							ALUSrc = 1'b0;
 							ALUOp = 3'b011;
 							MemWrite = 1'b0;

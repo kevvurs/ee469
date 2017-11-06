@@ -10,6 +10,12 @@ module program_counter (
 	input logic [18:0] cond_addr;
 	input logic [25:0] br_addr;
 	
+	parameter
+	size = 64,
+	add_code = 3'b010,
+	incr = 64'd4,
+	shift_d = 6'd2;
+	
 	logic [size-1:0] count_wr, count_rd;
 	
 	logic pc_incr_neg, pc_incr_z,
@@ -23,11 +29,6 @@ module program_counter (
 		
 	logic [63:0] branch, step;
 	
-	parameter
-		size = 64,
-		add_code = 3'b010,
-		incr = 64'd4,
-		shift_d = 5'd2;
 	
 	register #size counter_memory (
 		.d(count_wr),

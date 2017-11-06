@@ -7,7 +7,7 @@ module Reg_Create #(parameter WIDTH=64) (q, in, en, reset, clk);
 	genvar j;
 	generate
 		for(j=0; j < WIDTH; j++) begin : MUXXES
-			mux2_1 createReg (.out(d[j]), .feedback(q[j]), .in(in[j]), .en(en));
+			mux2_1 createReg (.out(d[j]), .in0(q[j]), .in1(in[j]), .sel(en));
 		end
 	endgenerate
 	

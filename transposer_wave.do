@@ -6,7 +6,7 @@ add wave -noupdate -color {Lime Green} -label SHAMT /transposer_testbench/shamt
 add wave -noupdate -color {Lime Green} -label Z /transposer_testbench/clear
 add wave -noupdate -color {Slate Blue} -label Result -radix hexadecimal /transposer_testbench/out
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {30412 ps} 0}
+WaveRestoreCursors {{Cursor 1} {70000 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 100

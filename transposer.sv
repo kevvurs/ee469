@@ -82,6 +82,18 @@ module transposer_testbench();
     shamt = 2'b10;
     clear = 1'b0;
     #delay;
+	 
+	 data[63:0] = 64'h4293480238098048;
+    fixed[15:0] = 64'hBABE;
+    shamt = 2'b11;
+    clear = 1'b0;
+    #delay;
+	 
+	 data[63:0] = 64'h4293480238098048;
+    fixed[15:0] = 64'hBABE;
+    shamt = 2'b11;
+    clear = 1'b1;
+    #delay;
 
     #delay;
   end

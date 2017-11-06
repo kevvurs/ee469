@@ -1,3 +1,5 @@
+`timescale 1ns/10ps
+
 module cpu(reset, clk);
 	input logic reset, clk;
 	logic [31:0] instruction;
@@ -42,9 +44,9 @@ module cpu(reset, clk);
 
 	program_counter PC(
 		.program_index(instr_addr),
-		.cond_addr(instruction[23:5]),
-		.br_addr(CondAddr19),
-		.uncondbr(BrAddr26),
+		.cond_addr(CondAddr19),
+		.br_addr(BrAddr26),
+		.uncondbr(UncondBr),
 		.br_taken(BrTaken),
 		.reset(reset),
 		.clk(clk)
@@ -101,6 +103,7 @@ module cpu(reset, clk);
 		.ReadRegister2(RegChoose),
 		.WriteRegister(Rd),
 		.RegWrite(RegWrite),
+		.reset(reset),
 		.clk(clk)
 	);
 
@@ -117,14 +120,14 @@ module cpu(reset, clk);
 	Big64mux2_1 ChooseConstant(
 		.out(constArg),
 		.in0(Daddr64),
-		.in1(Imm12),
+		.in1(Imm64),
 		.sel(ImmInstr)
 	);
 
 	Big64mux2_1 ChooseConstantOrDb(
 		.out(addArg),
 		.in0(Db),
-		.in1(addArg),
+		.in1(constArg),
 		.sel(ALUSrc)
 	);
 
@@ -174,7 +177,7 @@ module cpu(reset, clk);
 		.clk(clk)
 	);
 
-	transposer mov(
+	transposer mov1(
 		.data(Db),
 		.fixed(Imm16),
 		.shamt(shamt),
@@ -194,5 +197,24 @@ endmodule
 
 module cpu_testbench();
 
-
+	parameter ClockDelay = 5000;
+	logic clk, reset;
+	cpu dut (.reset, .clk);
+	
+	initial begin // Set up the clock
+		clk <= 0;
+		forever #(ClockDelay/2) clk <= ~clk;
+	end
+	integer i;
+	initial begin
+		reset <= 1; @(posedge clk);
+		reset <= 0; @(posedge clk);
+		for (i = 0; i < 20; i++) begin
+			@(posedge clk);
+		end
+		$stop;
+	end
+	
+		
+		
 endmodule
