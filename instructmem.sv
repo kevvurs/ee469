@@ -3,11 +3,21 @@
 // two words of the address must be 0).
 //
 // To change the file that is loaded, edit the filename here:
+//good
 //`define BENCHMARK "./CPU/test01_AddiB.arm"
-`define BENCHMARK "./CPU/test02_AddsSubs.arm"
+//good
+//`define BENCHMARK "./CPU/test02_AddsSubs.arm"
+//good
 //`define BENCHMARK "./CPU/test03_CbzB.arm"
+//good
 //`define BENCHMARK "./CPU/test04_LdurStur.arm"
-//`define BENCHMARK "../benchmarks/test05_Blt.arm"
+//good
+//`define BENCHMARK "./CPU/test05_Blt.arm"
+//`define BENCHMARK "./CPU/test06_MovkMovz.arm"
+`define BENCHMARK "./CPU/test07_LdurbSturb.arm"
+//`define BENCHMARK "./CPU/test10_forwarding.arm"
+//`define BENCHMARK "./CPU/test11_Sort.arm"
+//`define BENCHMARK "./CPU/test12_ToUpper.arm"
 
 `timescale 1ns/10ps
 

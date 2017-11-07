@@ -8,7 +8,7 @@ module cpu(reset, clk);
 	// Controls
 	logic UncondBr, BrTaken, Reg2Loc,
 		RegWrite, ALUSrc, MemWrite,
-		CmpMode, ImmInstr, ByteOrFull, MemToReg,
+		CmpMode, ImmInstr, ByteOrFull, ByteorFullData, MemToReg,
 		DataMemRead, clear, mov;
 
 	// instr. args
@@ -30,7 +30,7 @@ module cpu(reset, clk);
 	logic [63:0] Da, Db;
 	logic [3:0] flags;
 	logic negative, zero, overflow, carry_out;
-	logic [63:0] ALUResult, addArg, constArg;
+	logic [63:0] ALUResult, addArg, constArg, fullOByte;
 
 	// Choose memData controls
 	logic [3:0] size;
@@ -117,9 +117,16 @@ module cpu(reset, clk);
 		.out(Imm64)
 	);
 
+	Big64mux2_1 fullOrByte(
+		.out(fullOByte),
+		.in0(Daddr64),
+		.in1({56'b00000000000000000000000000000000000000000000000000000000, Daddr64[7:0]}),
+		.sel(ByteorFullData)
+	);
+
 	Big64mux2_1 ChooseConstant(
 		.out(constArg),
-		.in0(Daddr64),
+		.in0(fullOByte),
 		.in1(Imm64),
 		.sel(ImmInstr)
 	);

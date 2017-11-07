@@ -6,7 +6,7 @@ module instr_decoder(instruction,
 	MemWrite, MemToReg,
 	DAddr9, Imm12, shamt, Imm16,
 	CondAddr19, BrAddr26,
-	ImmInstr, ByteOrFull, DataMemRead,
+	ImmInstr, ByteOrFull, ByteorFullData, DataMemRead,
 	Rn, Rm, Rd,
 	clear, mov
 );
@@ -16,7 +16,7 @@ module instr_decoder(instruction,
 	// Controllers
 	output logic UncondBr, BrTaken, Reg2Loc,
 		RegWrite, ALUSrc , MemWrite, MemToReg,
-		CmpMode, ImmInstr, ByteOrFull, DataMemRead,
+		CmpMode, ImmInstr, ByteOrFull, ByteorFullData, DataMemRead,
 		clear, mov;
 	output logic [2:0] ALUOp;
 
@@ -92,6 +92,7 @@ module instr_decoder(instruction,
 
 		// If store or load 1 byte then true, false when full load or store
 		ByteOrFull = 1'b0;
+		ByteorFullData = 1'b0;
 
 		// Decoder block:
 		// B-type
@@ -191,6 +192,7 @@ module instr_decoder(instruction,
 									MemWrite = 1'b1;
 									MemToReg = 1'b1;
 									ByteOrFull = 1'b1;
+									ByteorFullData = 1'b1;
 								end
 
 								LDURB: begin
@@ -203,6 +205,9 @@ module instr_decoder(instruction,
 									MemWrite = 1'b0;
 									MemToReg = 1'b1;
 									ByteOrFull = 1'b1;
+									ByteorFullData = 1'b1;
+									DataMemRead = 1'b1;
+
 								end
 
 								STUR: begin
@@ -227,6 +232,7 @@ module instr_decoder(instruction,
 									MemWrite = 1'b0;
 									MemToReg = 1'b1;
 									ByteOrFull = 1'b0;
+									DataMemRead = 1'b1;
 								end
 							default:
 
@@ -246,7 +252,6 @@ module instr_decoder(instruction,
 								end
 							default: begin
 								mov = 1'b1;
-
 								// TODO: MOV
 								case (instruction[31:23])
 									MOVK: begin
