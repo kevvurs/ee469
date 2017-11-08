@@ -186,13 +186,12 @@ module instr_decoder(instruction,
 									UncondBr = 1'b0;
 									BrTaken =  1'b0;
 									Reg2Loc = 1'b0;
-									RegWrite = 1'b1;
+									RegWrite = 1'b0;
 									ALUSrc = 1'b1;
 									ALUOp = 3'b010;
 									MemWrite = 1'b1;
 									MemToReg = 1'b1;
 									ByteOrFull = 1'b1;
-									ByteorFullData = 1'b1;
 								end
 
 								LDURB: begin

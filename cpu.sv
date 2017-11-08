@@ -30,7 +30,7 @@ module cpu(reset, clk);
 	logic [63:0] Da, Db;
 	logic [3:0] flags;
 	logic negative, zero, overflow, carry_out;
-	logic [63:0] ALUResult, addArg, constArg, fullOByte;
+	logic [63:0] ALUResult, addArg, constArg, fullOrByte, WrD;
 
 	// Choose memData controls
 	logic [3:0] size;
@@ -78,6 +78,7 @@ module cpu(reset, clk);
 		.CondAddr19,
 		.BrAddr26,
 		.ByteOrFull,
+		.ByteorFullData,
 		.DataMemRead,
 		.MemToReg,
 		.Rn,
@@ -98,7 +99,7 @@ module cpu(reset, clk);
 	regfile registerFile(
 		.ReadData1(Da),
 		.ReadData2(Db),
-		.WriteData(WriteData),
+		.WriteData(WrD),
 		.ReadRegister1(Rn),
 		.ReadRegister2(RegChoose),
 		.WriteRegister(Rd),
@@ -112,21 +113,15 @@ module cpu(reset, clk);
 		.out(Daddr64)
 	);
 
-	sign_extend #(12, 64) extImm12(
+	sign_extend_unsigned #(12, 64) extImm12(
 		.in(Imm12),
 		.out(Imm64)
 	);
 
-	Big64mux2_1 fullOrByte(
-		.out(fullOByte),
-		.in0(Daddr64),
-		.in1({56'b00000000000000000000000000000000000000000000000000000000, Daddr64[7:0]}),
-		.sel(ByteorFullData)
-	);
 
 	Big64mux2_1 ChooseConstant(
 		.out(constArg),
-		.in0(fullOByte),
+		.in0(Daddr64),
 		.in1(Imm64),
 		.sel(ImmInstr)
 	);
@@ -157,7 +152,6 @@ module cpu(reset, clk);
 		.sel(ByteOrFull)
 	);
 
-
 	datamem dataMemory(
 	.address(ALUResult),
 	.write_enable(MemWrite),
@@ -175,6 +169,12 @@ module cpu(reset, clk);
 		.sel(MemToReg)
 	);
 
+	Big64mux2_1 LoadFullDataOrByte (
+		.out(WrD),
+		.in0(WriteData),
+		.in1({56'b00000000000000000000000000000000000000000000000000000000, WriteData[7:0]}),
+		.sel(ByteorFullData)
+	);
 
 	Reg_Create #(4) FlagRegister(
 		.q(flags),
@@ -216,7 +216,7 @@ module cpu_testbench();
 	initial begin
 		reset <= 1; @(posedge clk);
 		reset <= 0; @(posedge clk);
-		for (i = 0; i < 20; i++) begin
+		for (i = 0; i < 30; i++) begin
 			@(posedge clk);
 		end
 		$stop;
