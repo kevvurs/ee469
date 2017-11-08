@@ -53,6 +53,7 @@ module instr_decoder(instruction,
 
 		// I-type
 		ADDI = 10'b1001000100,
+
 		// D-type
 		STURB = 11'b00111000000,
 		LDURB = 11'b00111000010,
@@ -68,28 +69,25 @@ module instr_decoder(instruction,
 
 
 	always_comb begin
-
+		// Commands here act as global defaults
+		// Arguments that stay the same in instructions
 		Rd = instruction[4:0];
 		Rn = instruction[9:5];
 		Rm = instruction[20:16];
-
-		// Commands here act as global defaults
-		// Args
 		BrAddr26 = instruction[25:0];
 		CondAddr19 = instruction[23:5];
 		Imm12 = instruction[21:10];
 		// TODO: shamt = instruction[15:10];
-		Imm16 = instruction[21:10];
+		Imm16 = instruction[20:5];
 		DAddr9 = instruction[20:12];
-
+		shamt = instruction[22:21];
+		// Control variables that stay constant in most instructions
 		CmpMode = 1'b0;
 		ImmInstr = 1'b0;
 		DataMemRead = 1'b0;
 		MemToReg = 1'b0;
-
 		clear = 1'b0;
 		mov = 1'b0;
-
 		// If store or load 1 byte then true, false when full load or store
 		ByteOrFull = 1'b0;
 		ByteorFullData = 1'b0;
@@ -107,9 +105,7 @@ module instr_decoder(instruction,
 				MemWrite = 1'b0;
 				MemToReg = 1'b0;
 			end
-
 			default:
-
 				// CB-type
 				case (instruction[31:24])
 					BCond:
@@ -254,25 +250,25 @@ module instr_decoder(instruction,
 								// TODO: MOV
 								case (instruction[31:23])
 									MOVK: begin
-										UncondBr = 1'bx;
-										BrTaken =  1'bx;
+										UncondBr = 1'b0;
+										BrTaken =  1'b0;
 										Reg2Loc = 1'b0;
-										RegWrite = 1'bx;
-										ALUSrc = 1'bx;
-										ALUOp = 3'bxxx;
-										MemWrite = 1'bx;
-										MemToReg = 1'bx;
+										RegWrite = 1'b1;
+										ALUSrc = 1'b0;
+										ALUOp = 3'b000;
+										MemWrite = 1'b0;
+										MemToReg = 1'b0;
 									end
 
 									MOVZ: begin
-										UncondBr = 1'bx;
-										BrTaken =  1'bx;
-										Reg2Loc = 1'bx;
-										RegWrite = 1'bx;
-										ALUSrc = 1'bx;
-										ALUOp = 3'bxxx;
-										MemWrite = 1'bx;
-										MemToReg = 1'bx;
+										UncondBr = 1'b0;
+										BrTaken =  1'b0;
+										Reg2Loc = 1'b0;
+										RegWrite = 1'b1;
+										ALUSrc = 1'b0;
+										ALUOp = 3'b000;
+										MemWrite = 1'b0;
+										MemToReg = 1'b0;
 										clear = 1'b1;
 									end
 

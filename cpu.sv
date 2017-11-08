@@ -135,7 +135,7 @@ module cpu(reset, clk);
 
 	alu mainALU(
 		.A(Da),
-		.B(addArg),
+		.B(aluOut),
 		.cntrl(ALUOp),
 		.result(ALUResult),
 		.negative,
@@ -194,7 +194,7 @@ module cpu(reset, clk);
 
 	Big64mux2_1 aluMux(
 		.out(aluOut),
-		.in0(ALUResult),
+		.in0(addArg),
 		.in1(inserted),
 		.sel(mov)
 	);
@@ -216,7 +216,7 @@ module cpu_testbench();
 	initial begin
 		reset <= 1; @(posedge clk);
 		reset <= 0; @(posedge clk);
-		for (i = 0; i < 30; i++) begin
+		for (i = 0; i < 1000; i++) begin
 			@(posedge clk);
 		end
 		$stop;
