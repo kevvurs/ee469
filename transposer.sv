@@ -9,6 +9,7 @@ module transposer(data, fixed, shamt, clear, out);
   logic [5:0] shamtX16;
   logic [63:0] comp;
   parameter left = 1'b0;
+  parameter delay = 5;
 
   logic [63:0] extShamt, extShamtX16,
 	extFixed, movFixed;
@@ -17,7 +18,7 @@ module transposer(data, fixed, shamt, clear, out);
     .in(shamt),
     .out(extShamt)
   );
-  
+
   prepend #(16, 64) prepFixed(
     .in(fixed),
     .out(extFixed)
@@ -32,25 +33,41 @@ module transposer(data, fixed, shamt, clear, out);
 
   // TODO: using 6'b to fit in shifter but this caps out
   assign shamtX16 = extShamtX16[5:0];
-  
+
    shifter lsl(
     .value(extFixed),
     .direction(left),
     .distance(shamtX16),
     .result(movFixed)
   );
-  
-  integer i;
-  always_comb
-    if (clear)
-		out[63:0] = movFixed[63:0];
-	else begin
-		for (i=0; i<64; i+=1)
-			if (i >= shamtX16 && i < shamtX16 + 6'd16) 
-				out[i] = movFixed[i];
-			else
-				out[i] = data[i];
-	end
+
+  logic is00;
+  logic is16;
+  logic is32;
+  logic is48;
+
+  logic excl;
+  logic [3:0] dec;
+  xor #delay checkXx (excl, shamt[1], shamt[0]);
+  nor #delay check00 (dec[0], shamt[1], shamt[0]);
+  and #delay check16 (dec[1], excl, shamt[0]);
+  and #delay check32 (dec[2], shamt[1], excl);
+  and #delay check48 (dec[3], shamt[1], shamt[0]);
+
+  logic [3:0] sel;
+  genvar n;
+  generate
+    for (n=0; n<4; n+=1) begin : eachOr
+      or #delay iOR (sel[n], clear, dec[n]);
+    end
+  endgenerate
+
+  genvar i;
+  generate
+    for (i=0; i<64; i+=1) begin : eachMux
+      mux2_1 iMux (.out(out[i]), .in0(data[i]), .in1(movFixed[i]), .sel(sel[i/16]));
+    end
+  endgenerate
 endmodule
 
 module transposer_testbench();
@@ -82,13 +99,13 @@ module transposer_testbench();
     shamt = 2'b10;
     clear = 1'b0;
     #delay;
-	 
+
 	 data[63:0] = 64'h4293480238098048;
     fixed[15:0] = 64'hBABE;
     shamt = 2'b11;
     clear = 1'b0;
     #delay;
-	 
+
 	 data[63:0] = 64'h4293480238098048;
     fixed[15:0] = 64'hBABE;
     shamt = 2'b11;
