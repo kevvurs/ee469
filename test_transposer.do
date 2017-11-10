@@ -6,6 +6,7 @@ vlib work
 #     their own "vlog" line below.
 vlog "./math.sv"
 vlog "./prepend.sv"
+vlog "./mux2_1.sv"
 vlog "./transposer.sv"
 
 # Call vsim to invoke simulator
