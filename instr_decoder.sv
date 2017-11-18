@@ -91,6 +91,9 @@ module instr_decoder(instruction,
 		// If store or load 1 byte then true, false when full load or store
 		ByteOrFull = 1'b0;
 		ByteorFullData = 1'b0;
+		RegWrite = 1'b0;
+		MemWrite = 1'b0;
+		BrTaken = 1'b0;
 
 		// Decoder block:
 		// B-type
@@ -272,16 +275,28 @@ module instr_decoder(instruction,
 										clear = 1'b1;
 									end
 
-									// WC no-op
+									// N00p
 									default: begin
-										UncondBr = 1'bx;
-										BrTaken =  1'b0;
-										Reg2Loc = 1'bx;
+										Rd = instruction[4:0];
+										Rn = instruction[9:5];
+										Rm = instruction[20:16];
+										BrAddr26 = instruction[25:0];
+										CondAddr19 = instruction[23:5];
+										Imm12 = instruction[21:10];
+										Imm16 = instruction[20:5];
+										DAddr9 = instruction[20:12];
+										shamt = instruction[22:21];
+										CmpMode = 1'b0;
+										ImmInstr = 1'b0;
+										DataMemRead = 1'b0;
+										MemToReg = 1'b0;
+										clear = 1'b0;
+										mov = 1'b0;
+										ByteOrFull = 1'b0;
+										ByteorFullData = 1'b0;
 										RegWrite = 1'b0;
-										ALUSrc = 1'bx;
-										ALUOp = 3'bxxx;
 										MemWrite = 1'b0;
-										MemToReg = 1'bx;
+										BrTaken = 1'b0;
 									end
 								endcase
 							end

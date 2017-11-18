@@ -29,7 +29,7 @@ module cpu(reset, clk);
 	// Data
 	logic [63:0] Da, Db;
 	logic [3:0] flags;
-	logic negative, zero, overflow, carry_out;
+	logic negative, isZero, zero, overflow, carry_out;
 	logic [63:0] ALUResult, addArg, constArg, fullOrByte, WrD;
 
 	// Choose memData controls
@@ -40,8 +40,11 @@ module cpu(reset, clk);
 	logic [63:0] WriteData;
 
 	// mov
-	logic [63:0] inserted, aluOut;
-
+	logic [63:0] inserted;
+	logic [63:0] aluOut;
+	
+// INSTRUCTION FETCH
+////////////////////////////////////////////////////////////////
 	program_counter PC(
 		.program_index(instr_addr),
 		.cond_addr(CondAddr19),
@@ -50,17 +53,27 @@ module cpu(reset, clk);
 		.br_taken(BrTaken),
 		.reset(reset),
 		.clk(clk)
-	);
+	);  // TODO: decouple the internal PC adders and pipe instr_addr
 
 	instructmem memory(
 		.address(instr_addr),
 		.instruction(instruction),
 		.clk(clk)
 	);
-
+	
+	logic [31:0] currentInstruction
+	register_BABY_Maker #32 instruct_pipe(
+		.q(currentInstruction),
+		.in(instruction),
+		.clk(clk),
+		.reset(reset),
+	);
+	
+// REG/DEC
+////////////////////////////////////////////////////////////////
 	instr_decoder controls(
-		.instruction,
-		.ZeroFlag(zero),
+		.instruction(currentInstruction),
+		.ZeroFlag(isZero),
 		.flags,
 		.UncondBr,
 		.BrTaken,
@@ -87,7 +100,9 @@ module cpu(reset, clk);
 		.clear,
 		.mov
 	);
-
+	
+	
+	
 	// Proceccinfg block
 	n_mux2_1 #5 ChooseWhatInput(
 		.out(RegChoose),
@@ -105,9 +120,15 @@ module cpu(reset, clk);
 		.WriteRegister(Rd),
 		.RegWrite(RegWrite),
 		.reset(reset),
-		.clk(clk)
+		.clk(~clk)
 	);
-
+	
+	// Accelerated Branch
+	zeroFlagCheck accel(
+		.zeroFlagCheck(isZero),
+		.result(Db)
+	);
+	
 	sign_extend #(9, 64) extDaddr(
 		.in(DAddr9),
 		.out(Daddr64)
@@ -118,32 +139,138 @@ module cpu(reset, clk);
 		.out(Imm64)
 	);
 
-
+	// Choose ALU input B ->
 	Big64mux2_1 ChooseConstant(
 		.out(constArg),
 		.in0(Daddr64),
 		.in1(Imm64),
 		.sel(ImmInstr)
 	);
-
+	
 	Big64mux2_1 ChooseConstantOrDb(
 		.out(addArg),
 		.in0(Db),
 		.in1(constArg),
 		.sel(ALUSrc)
+	);  // -> ALU input B
+
+	// PIPE //
+	logic 
+		execute_MemWrite,
+		execute_MemToReg,
+		execute_RegWrite
+		execute_CmpMode
+		execute_clear,
+		execute_mov;
+	logic [1:0] execute_shamt;
+	logic [2:0] execute_ALUOp;
+	logic [15:0] execute_Imm16;
+	logic [63:0] 
+		execute_Da,
+		execute_Db,
+		execute_addArg;
+	
+	register_BABY_Maker #? regdec_pipe(
+		.q({
+			execute_Da,
+			execute_Db,
+			execute_addArg,
+			execute_Imm16,
+			execute_ALUOp,
+			execute_shamt,
+			execute_MemWrite,
+			execute_MemToReg,
+			execute_RegWrite,
+			execute_CmpMode,
+			execute_clear,
+			execute_mov
+		}),
+		.in({
+			Da,
+			Db,
+			addArg,
+			Imm16,
+			ALUOp,
+			shamt,
+			MemWrite,
+			MemToReg,
+			RegWrite,
+			CmpMode,
+			clear,
+			mov
+		}),
+		.clk(clk),
+		.reset(reset),
+	);   // -->
+	
+	// TODO execute_ALUSrc might be wanted
+	
+// EXECUTE
+///////////////////////////////////////////////////////////////////
+
+	// MOV toolchain
+	transposer mov1(
+		.data(execute_Db),
+		.fixed(execute_Imm16),
+		.shamt(execute_shamt),
+		.clear(execute_clear),
+		.out(inserted)
+	);
+
+	Big64mux2_1 aluMux(
+		.out(aluOut),
+		.in0(execute_addArg),
+		.in1(inserted),
+		.sel(execute_mov)
 	);
 
 	alu mainALU(
-		.A(Da),
+		.A(execute_Da),
 		.B(aluOut),
-		.cntrl(ALUOp),
+		.cntrl(execute_ALUOp),
 		.result(ALUResult),
 		.negative,
 		.zero,
 		.overflow,
 		.carry_out
 	);
+	
+	// TODO: integrate this with readahead
+	Reg_Create #(4) FlagRegister(
+		.q(flags),
+		.in({negative, zero, overflow, carry_out}),
+		.en(execute_CmpMode),
+		.reset(reset),
+		.clk(clk)
+	);
+	
+	// TODO: Forwarding plugin here
 
+	logic
+		mem_MemWrite,
+		mem_MemToReg,
+		mem_RegWrite;
+	logic [63:0] mem_ALUResult;
+	
+	register_BABY_Maker #132 execute_pipe(
+		.q({
+			mem_ALUResult
+			mem_MemWrite,
+			mem_MemToReg,
+			mem_RegWrite
+		}),
+		.in({
+			ALUResult,
+			execute_MemWrite,
+			execute_MemToReg,
+			execute_RegWrite
+		}),
+		.clk(clk),
+		.reset(reset),
+	);
+
+// MEM
+///////////////////////////////////////////////////////////////////
 	// Decides transfer amount
 	n_mux2_1 #4 TransferAmt(
 		.out(size),
@@ -175,31 +302,6 @@ module cpu(reset, clk);
 		.in1({56'b00000000000000000000000000000000000000000000000000000000, WriteData[7:0]}),
 		.sel(ByteorFullData)
 	);
-
-	Reg_Create #(4) FlagRegister(
-		.q(flags),
-		.in({negative, zero, overflow, carry_out}),
-		.en(CmpMode),
-		.reset(reset),
-		.clk(clk)
-	);
-
-	transposer mov1(
-		.data(Db),
-		.fixed(Imm16),
-		.shamt(shamt),
-		.clear(clear),
-		.out(inserted)
-	);
-
-	Big64mux2_1 aluMux(
-		.out(aluOut),
-		.in0(addArg),
-		.in1(inserted),
-		.sel(mov)
-	);
-
-
 endmodule
 
 module cpu_testbench();
