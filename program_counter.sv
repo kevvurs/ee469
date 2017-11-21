@@ -40,7 +40,7 @@ module program_counter (
 	);
 	
 	alu pc_incr (
-		.A(baby_maker_br),
+		.A(count_rd),
 		.B(incr),
 		.cntrl(add_code),
 		.result(step),
@@ -75,7 +75,7 @@ module program_counter (
 	);
 	
 	alu pc_sum (
-		.A(count_rd),
+		.A(baby_maker_br),
 		.B(br_delta),
 		.cntrl(add_code),
 		.result(branch),

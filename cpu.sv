@@ -50,6 +50,8 @@ module cpu(reset, clk);
 	// WriteBack Data Vals
 	logic regWriteFuck;
 	logic [63:0] WBData;
+	logic [4:0] wb_Rd;
+
 	
 // INSTRUCTION FETCH
 ////////////////////////////////////////////////////////////////
@@ -115,7 +117,7 @@ module cpu(reset, clk);
 	// Proceccinfg block
 	n_mux2_1 #5 ChooseWhatInput(
 		.out(RegChoose),
-		.in0(Rd),
+		.in0(wb_Rd),
 		.in1(Rm),
 		.sel(Reg2Loc)
 	);
@@ -126,7 +128,7 @@ module cpu(reset, clk);
 		.WriteData(WBData),
 		.ReadRegister1(Rn),
 		.ReadRegister2(RegChoose),
-		.WriteRegister(Rd),
+		.WriteRegister(wb_Rd),
 		.RegWrite(regWriteFuck),
 		.reset(reset),
 		.clk(~clk)
@@ -175,6 +177,7 @@ module cpu(reset, clk);
 		execute_ByteorFullData;
 	logic [1:0] execute_shamt;
 	logic [2:0] execute_ALUOp;
+	logic [4:0] execute_Rd;
 	logic [15:0] execute_Imm16;
 	logic [63:0] 
 		execute_Da,
@@ -182,7 +185,7 @@ module cpu(reset, clk);
 		execute_addArg,
 		execute_ReadDataMem;
 	
-	register_BABY_Maker #285 regdec_pipe(
+	register_BABY_Maker #290 regdec_pipe(
 		.q({
 			execute_Da,
 			execute_Db,
@@ -198,7 +201,8 @@ module cpu(reset, clk);
 			execute_mov,
 			execute_ByteOrFull,
 			execute_ByteorFullData,
-			execute_ReadDataMem
+			execute_ReadDataMem,
+			execute_Rd
 
 		}),
 		.in({
@@ -216,7 +220,8 @@ module cpu(reset, clk);
 			mov,
 			ByteOrFull,
 			ByteorFullData,
-			ReadDataMem
+			ReadDataMem,
+			Rd
 		}),
 		.clk(clk),
 		.reset(reset)
@@ -271,9 +276,10 @@ module cpu(reset, clk);
 		mem_RegWrite,
 		mem_ByteOrFull,
 		mem_ByteorFullData;
-		logic [63:0] mem_ALUResult, mem_Db, mem_ReadDataMem;
+	logic [63:0] mem_ALUResult, mem_Db, mem_ReadDataMem;
+	logic [4:0] mem_Rd;
 	
-	register_BABY_Maker #197 execute_pipe(
+	register_BABY_Maker #202 execute_pipe(
 		.q({
 			mem_ALUResult,
 			mem_MemWrite,
@@ -282,7 +288,8 @@ module cpu(reset, clk);
 			mem_ByteOrFull,
 			mem_ByteorFullData,
 			mem_Db,
-			mem_ReadDataMem
+			mem_ReadDataMem,
+			mem_Rd
 		}),
 		.in({
 			ALUResult,
@@ -292,7 +299,8 @@ module cpu(reset, clk);
 			execute_ByteOrFull,
 			execute_ByteorFullData,
 			execute_Db,
-			execute_ReadDataMem
+			execute_ReadDataMem,
+			execute_Rd
 		}),
 		.clk(clk),
 		.reset(reset)
@@ -331,10 +339,9 @@ module cpu(reset, clk);
 		.in1({56'b00000000000000000000000000000000000000000000000000000000, WriteData[7:0]}),
 		.sel(mem_ByteorFullData)
 	);
-
-	register_BABY_Maker #65 write_back_pipe(
-		.q({WBData, regWriteFuck}),
-		.in({WrD, mem_RegWrite}),
+	register_BABY_Maker #70 write_back_pipe(
+		.q({WBData, regWriteFuck, wb_Rd}),
+		.in({WrD, mem_RegWrite, mem_Rd}),
 		.clk(clk),
 		.reset(reset)
 	);
