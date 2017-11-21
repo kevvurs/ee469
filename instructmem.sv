@@ -4,7 +4,7 @@
 //
 // To change the file that is loaded, edit the filename here:
 //good
-//`define BENCHMARK "./CPU/test01_AddiB.arm"
+`define BENCHMARK "./CPU/test01_AddiB.arm"
 //good
 //`define BENCHMARK "./CPU/test02_AddsSubs.arm"
 //good
@@ -23,12 +23,12 @@
 //`define BENCHMARK "./CPU/test11_Sort.arm"
 //good
 //`define BENCHMARK "./CPU/test12_ToUpper.arm"
-`define BENCHMARK "./CPU/test_daniel.arm"
+//`define BENCHMARK "./CPU/test_daniel.arm"
 `timescale 1ns/10ps
 
 // How many bytes are in our memory?  Must be a power of two.
 `define INSTRUCT_MEM_SIZE		1024
-	
+
 module instructmem (
 	input		logic		[63:0]	address,
 	output	logic		[31:0]	instruction,
@@ -40,7 +40,7 @@ module instructmem (
 
 	// Make sure size is a power of two and reasonable.
 	initial assert((`INSTRUCT_MEM_SIZE & (`INSTRUCT_MEM_SIZE-1)) == 0 && `INSTRUCT_MEM_SIZE > 4);
-	
+
 	// Make sure accesses are reasonable.
 	always_ff @(posedge clk) begin
 		if (address !== 'x) begin // address or size could be all X's at startup, so ignore this case.
@@ -48,16 +48,16 @@ module instructmem (
 			assert(address + 3 < `INSTRUCT_MEM_SIZE);	// Make sure address in bounds.
 		end
 	end
-	
+
 	// The data storage itself.
 	logic [31:0] mem [`INSTRUCT_MEM_SIZE/4-1:0];
-	
+
 	// Load the program - change the filename to pick a different program.
 	initial begin
 		$readmemb(`BENCHMARK, mem);
 		$display("Running benchmark: ", `BENCHMARK);
 	end
-	
+
 	// Handle the reads.
 	integer i;
 	always_comb begin
@@ -66,7 +66,7 @@ module instructmem (
 		else
 			instruction = mem[address/4];
 	end
-		
+
 endmodule
 
 module instructmem_testbench ();
@@ -76,22 +76,22 @@ module instructmem_testbench ();
 	logic		[63:0]	address;
 	logic					clk;
 	logic		[31:0]	instruction;
-	
+
 	instructmem dut (.address, .instruction, .clk);
-	
+
 	initial begin // Set up the clock
 		clk <= 0;
 		forever #(ClockDelay/2) clk <= ~clk;
 	end
-	
+
 	integer i;
 	initial begin
 		// Read every location, including just past the end of the memory.
 		for (i=0; i <= `INSTRUCT_MEM_SIZE; i = i + 4) begin
 			address <= i;
-			@(posedge clk); 
+			@(posedge clk);
 		end
 		$stop;
-		
+
 	end
 endmodule

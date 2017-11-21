@@ -1,12 +1,13 @@
-module fowarding(alu_rd_key, alu_result, reg_rm_lookup, reg_rn_lookup,
-  rm_fetch, rn_fetch, rm_valid, rn_valid, clk, reset);
-  input logic [4:0] alu_rd_key
-  input logic [63:0] alu_result;
-
+module fowarding(alu_rd_key, alu_result,
+  mem_rd_key, mem_result,
+  reg_rm_lookup, reg_rn_lookup,
+  rm_fetch, rn_fetch, rm_valid, rn_valid);
+  input logic [4:0] alu_rd_key, mem_rd_key;
+  input logic [63:0] alu_result, mem_result;
   input logic [4:0] reg_rm_lookup, reg_rn_lookup;
 
   output logic [63:0] rm_fetch, rn_fetch;
-  output logic rm_valid, rn_valid
+  output logic rm_valid, rn_valid;
 
   logic [1:0][63:0] alu_store_value;
   logic [1:0][4:0] alu_store_key;
@@ -14,6 +15,13 @@ module fowarding(alu_rd_key, alu_result, reg_rm_lookup, reg_rn_lookup,
   parameter x31 = 5'b11111;
 
   always_comb begin
+    // Write
+    alu_store_key[0][4:0] <= mem_rd_key;
+    alu_store_key[1][4:0] <= alu_rd_key;
+    alu_store_value[0][63:0] <= mem_result;
+    alu_store_value[1][63:0] <= alu_result;
+
+    // Read
     if (reg_rm_lookup == x31) begin
       rm_fetch = 64'd0;
       rm_valid =1'b0;
@@ -44,20 +52,6 @@ module fowarding(alu_rd_key, alu_result, reg_rm_lookup, reg_rn_lookup,
         rn_fetch = 64'd0;
         rn_valid =1'b0;
       end
-    end
-  end
-
-  always_ff @(posedge clk) begin
-    if (reset) begin
-      rm_fetch <= 64'd0;
-      rn_fetch <= 64'd0;
-      rm_valid <= 1'b0;
-      rn_valid <= 1'b0;
-    end else begin
-      alu_store_key[0] <= alu_store_key[1];
-      alu_store_key[1] <= alu_rd_key;
-      alu_store_value[0] <= alu_store_value[1];
-      alu_store_value[1] <= alu_result;
     end
   end
 endmodule

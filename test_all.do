@@ -40,6 +40,7 @@ vlog "./mux4_1.sv"
 vlog "./mux2_1.sv"
 vlog "./sign_extend_unsigned.sv"
 vlog "./register_BABY_Maker.sv"
+vlog "./fowarding.sv"
 
 
 # Call vsim to invoke simulator

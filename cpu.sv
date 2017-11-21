@@ -25,6 +25,7 @@ module cpu(reset, clk);
 
 	// Addr's
 	logic [4:0] Rd, Rm, Rn, RegChoose;
+	logic [4:0] mem_Rd;
 
 	// Data
 	logic [63:0] Da, Db;
@@ -41,9 +42,7 @@ module cpu(reset, clk);
 
 	// mov
 	logic [63:0] inserted;
-	logic [63:0] aluOut;
-
-
+	logic [63:0] exe_out, mem_exe_out;
 	// Old PC
 	logic [63:0] registerPC;
 
@@ -52,7 +51,18 @@ module cpu(reset, clk);
 	logic [63:0] WBData;
 	logic [4:0] wb_Rd;
 
-	
+	// forwarding crap
+	logic fwd_en;
+	logic [4:0] fwd_exe_id;
+	logic [4:0] fwd_mem_id;
+	logic [63:0] rm_catch;
+	logic [63:0] rn_catch;
+	logic rm_valid;
+	logic rn_valid;
+	logic [4:0] execute_Rd;
+	logic [63:0] fwd_Da, fwd_Db;
+
+
 // INSTRUCTION FETCH
 ////////////////////////////////////////////////////////////////
 	program_counter PC(
@@ -71,7 +81,7 @@ module cpu(reset, clk);
 		.instruction(instruction),
 		.clk(clk)
 	);
-	
+
 	logic [31:0] currentInstruction;
 	register_BABY_Maker #96 instruct_pipe(
 		.q({currentInstruction, registerPC}),
@@ -79,7 +89,7 @@ module cpu(reset, clk);
 		.clk(clk),
 		.reset(reset)
 	);
-	
+
 // REG/DEC
 ////////////////////////////////////////////////////////////////
 	instr_decoder controls(
@@ -109,11 +119,12 @@ module cpu(reset, clk);
 		.Rm,
 		.Rd,
 		.clear,
-		.mov
+		.mov,
+		.fwd_en
 	);
-	
-	
-	
+
+
+
 	// Proceccinfg block
 	n_mux2_1 #5 ChooseWhatInput(
 		.out(RegChoose),
@@ -133,13 +144,13 @@ module cpu(reset, clk);
 		.reset(reset),
 		.clk(~clk)
 	);
-	
+
 	// Accelerated Branch
 	zeroFlagCheck accel(
 		.zeroFlagCheck(isZero),
 		.result(Db)
 	);
-	
+
 	sign_extend #(9, 64) extDaddr(
 		.in(DAddr9),
 		.out(Daddr64)
@@ -157,7 +168,7 @@ module cpu(reset, clk);
 		.in1(Imm64),
 		.sel(ImmInstr)
 	);
-	
+
 	Big64mux2_1 ChooseConstantOrDb(
 		.out(addArg),
 		.in0(Db),
@@ -165,8 +176,50 @@ module cpu(reset, clk);
 		.sel(ALUSrc)
 	);  // -> ALU input B
 
+	// Forwarding //
+	n_mux2_1 #5 fwd_exe_enable(
+		.out(fwd_exe_id),
+		.in0(5'b11111),
+		.in1(execute_Rd),
+		.sel(execute_fwd_en)
+	);
+
+	n_mux2_1 #5 fwd_mem_enable(
+		.out(fwd_mem_id),
+		.in0(5'b11111),
+		.in1(mem_Rd),
+		.sel(mem_fwd_en)
+	);
+
+	fowarding BigBitch(
+		.alu_rd_key(fwd_exe_id),
+		.alu_result(exe_out),
+		.mem_rd_key(fwd_mem_id),
+		.mem_result(mem_exe_out),
+		.reg_rm_lookup(RegChoose),
+		.reg_rn_lookup(Rn),
+	  .rm_fetch(rm_catch),
+		.rn_fetch(rn_catch),
+		.rm_valid(rm_valid),
+		.rn_valid(rn_valid)
+	);
+
+	Big64mux2_1 muxymux(
+		.out(fwd_Db),
+		.in0(addArg),
+		.in1(rm_catch),
+		.sel(rm_valid)
+	);
+
+	Big64mux2_1 muxymux3(
+		.out(fwd_Da),
+		.in0(Da),
+		.in1(rn_catch),
+		.sel(rn_valid)
+	);
+
 	// PIPE //
-	logic 
+	logic
 		execute_MemWrite,
 		execute_MemToReg,
 		execute_RegWrite,
@@ -177,15 +230,14 @@ module cpu(reset, clk);
 		execute_ByteorFullData;
 	logic [1:0] execute_shamt;
 	logic [2:0] execute_ALUOp;
-	logic [4:0] execute_Rd;
 	logic [15:0] execute_Imm16;
-	logic [63:0] 
+	logic [63:0]
 		execute_Da,
 		execute_Db,
 		execute_addArg,
 		execute_ReadDataMem;
-	
-	register_BABY_Maker #290 regdec_pipe(
+
+	register_BABY_Maker #291 regdec_pipe(
 		.q({
 			execute_Da,
 			execute_Db,
@@ -202,12 +254,12 @@ module cpu(reset, clk);
 			execute_ByteOrFull,
 			execute_ByteorFullData,
 			execute_ReadDataMem,
-			execute_Rd
-
+			execute_Rd,
+			execute_fwd_en
 		}),
 		.in({
-			Da,
-			Db,
+			fwd_Da,
+			fwd_Db,
 			addArg,
 			Imm16,
 			ALUOp,
@@ -221,14 +273,15 @@ module cpu(reset, clk);
 			ByteOrFull,
 			ByteorFullData,
 			ReadDataMem,
-			Rd
+			Rd,
+			fwd_en
 		}),
 		.clk(clk),
 		.reset(reset)
 	);   // -->
-	
+
 	// TODO execute_ALUSrc might be wanted
-	
+
 // EXECUTE
 ///////////////////////////////////////////////////////////////////
 
@@ -241,16 +294,9 @@ module cpu(reset, clk);
 		.out(inserted)
 	);
 
-	Big64mux2_1 aluMux(
-		.out(aluOut),
-		.in0(execute_addArg),
-		.in1(inserted),
-		.sel(execute_mov)
-	);
-
 	alu mainALU(
 		.A(execute_Da),
-		.B(aluOut),
+		.B(execute_addArg),
 		.cntrl(execute_ALUOp),
 		.result(ALUResult),
 		.negative,
@@ -258,7 +304,14 @@ module cpu(reset, clk);
 		.overflow,
 		.carry_out
 	);
-	
+
+	Big64mux2_1 aluMux(
+		.out(exe_out),
+		.in0(ALUResult),
+		.in1(inserted),
+		.sel(execute_mov)
+	);
+
 	// TODO: integrate this with readahead
 	Reg_Create #(4) FlagRegister(
 		.q(flags),
@@ -267,7 +320,7 @@ module cpu(reset, clk);
 		.reset(reset),
 		.clk(clk)
 	);
-	
+
 	// TODO: Forwarding plugin here
 
 	logic
@@ -277,11 +330,11 @@ module cpu(reset, clk);
 		mem_ByteOrFull,
 		mem_ByteorFullData;
 	logic [63:0] mem_ALUResult, mem_Db, mem_ReadDataMem;
-	logic [4:0] mem_Rd;
-	
-	register_BABY_Maker #202 execute_pipe(
+
+
+	register_BABY_Maker #203 execute_pipe(
 		.q({
-			mem_ALUResult,
+			mem_exe_out,
 			mem_MemWrite,
 			mem_MemToReg,
 			mem_RegWrite,
@@ -289,10 +342,11 @@ module cpu(reset, clk);
 			mem_ByteorFullData,
 			mem_Db,
 			mem_ReadDataMem,
-			mem_Rd
+			mem_Rd,
+			mem_fwd_en
 		}),
 		.in({
-			ALUResult,
+			exe_out,
 			execute_MemWrite,
 			execute_MemToReg,
 			execute_RegWrite,
@@ -300,7 +354,8 @@ module cpu(reset, clk);
 			execute_ByteorFullData,
 			execute_Db,
 			execute_ReadDataMem,
-			execute_Rd
+			execute_Rd,
+			execute_fwd_en
 		}),
 		.clk(clk),
 		.reset(reset)
@@ -317,7 +372,7 @@ module cpu(reset, clk);
 	);
 
 	datamem dataMemory(
-	.address(mem_ALUResult),
+	.address(mem_exe_out),
 	.write_enable(mem_MemWrite),
 	.read_enable(mem_DataMemRead),
 	.write_data(mem_Db),
@@ -328,7 +383,7 @@ module cpu(reset, clk);
 
 	Big64mux2_1 RegWriteDataMux(
 		.out(WriteData),
-		.in0(mem_ALUResult),
+		.in0(mem_exe_out),
 		.in1(ReadDataMem),
 		.sel(mem_MemToReg)
 	);
@@ -352,7 +407,7 @@ module cpu_testbench();
 	parameter ClockDelay = 10000;
 	logic clk, reset;
 	cpu dut (.reset, .clk);
-	
+
 	initial begin // Set up the clock
 		clk <= 0;
 		forever #(ClockDelay/2) clk <= ~clk;
@@ -366,7 +421,7 @@ module cpu_testbench();
 		end
 		$stop;
 	end
-	
-		
-		
+
+
+
 endmodule

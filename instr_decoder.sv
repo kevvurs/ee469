@@ -8,7 +8,7 @@ module instr_decoder(instruction,
 	CondAddr19, BrAddr26,
 	ImmInstr, ByteOrFull, ByteorFullData, DataMemRead,
 	Rn, Rm, Rd,
-	clear, mov
+	clear, mov, fwd_en
 );
 
 	input logic [31:0] instruction;
@@ -17,7 +17,7 @@ module instr_decoder(instruction,
 	output logic UncondBr, BrTaken, Reg2Loc,
 		RegWrite, ALUSrc , MemWrite, MemToReg,
 		CmpMode, ImmInstr, ByteOrFull, ByteorFullData, DataMemRead,
-		clear, mov;
+		clear, mov, fwd_en;
 	output logic [2:0] ALUOp;
 
 	// Reg addr
@@ -94,6 +94,7 @@ module instr_decoder(instruction,
 		RegWrite = 1'b0;
 		MemWrite = 1'b0;
 		BrTaken = 1'b0;
+		fwd_en = 1'b1;
 
 		// Decoder block:
 		// B-type
@@ -107,6 +108,7 @@ module instr_decoder(instruction,
 				ALUOp = 3'bxxx;
 				MemWrite = 1'b0;
 				MemToReg = 1'b0;
+				fwd_en = 1'b0;
 			end
 			default:
 				// CB-type
@@ -122,6 +124,7 @@ module instr_decoder(instruction,
 								ALUOp = 3'b000;
 								MemWrite = 1'b0;
 								MemToReg = 1'b0;
+								fwd_en = 1'b0;
 							end
 
 							// no-op
@@ -134,6 +137,7 @@ module instr_decoder(instruction,
 								ALUOp = 3'bxxx;
 								MemWrite = 1'b0;
 								MemToReg = 1'bx;
+								fwd_en = 1'b0;
 							end
 						endcase
 
@@ -147,6 +151,7 @@ module instr_decoder(instruction,
 						ALUOp = 3'b000;
 						MemWrite = 1'b0;
 						MemToReg = 1'b0;
+						fwd_en = 1'b0;
 					end
 				default:
 
@@ -297,6 +302,7 @@ module instr_decoder(instruction,
 										RegWrite = 1'b0;
 										MemWrite = 1'b0;
 										BrTaken = 1'b0;
+										fwd_en = 1'b0;
 									end
 								endcase
 							end
