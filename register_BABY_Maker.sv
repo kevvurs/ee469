@@ -1,4 +1,4 @@
-module register_BABY_Maker #(parameter WIDTH=64) (q, in, en, reset, clk);
+module register_BABY_Maker #(parameter WIDTH=64) (q, in, reset, clk);
 	output logic [WIDTH-1:0] q;
 	input logic [WIDTH-1:0] in;
 	input logic reset, clk; 
@@ -33,7 +33,7 @@ module Reg_Create_testbench();
 		reset <= 0;				@(posedge clk);
 		in <= c;				@(posedge clk);
 								@(posedge clk);
-		in <= c; en <= 1;	    @(posedge clk);
+		in <= c;			    @(posedge clk);
 							    @(posedge clk);
 		$stop;
 	end

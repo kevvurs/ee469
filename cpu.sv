@@ -42,11 +42,20 @@ module cpu(reset, clk);
 	// mov
 	logic [63:0] inserted;
 	logic [63:0] aluOut;
+
+
+	// Old PC
+	logic [63:0] registerPC;
+
+	// WriteBack Data Vals
+	logic regWriteFuck;
+	logic [63:0] WBData;
 	
 // INSTRUCTION FETCH
 ////////////////////////////////////////////////////////////////
 	program_counter PC(
 		.program_index(instr_addr),
+		.baby_maker_br(registerPC),
 		.cond_addr(CondAddr19),
 		.br_addr(BrAddr26),
 		.uncondbr(UncondBr),
@@ -61,12 +70,12 @@ module cpu(reset, clk);
 		.clk(clk)
 	);
 	
-	logic [31:0] currentInstruction
-	register_BABY_Maker #32 instruct_pipe(
-		.q(currentInstruction),
-		.in(instruction),
+	logic [31:0] currentInstruction;
+	register_BABY_Maker #96 instruct_pipe(
+		.q({currentInstruction, registerPC}),
+		.in({instruction, instr_addr}),
 		.clk(clk),
-		.reset(reset),
+		.reset(reset)
 	);
 	
 // REG/DEC
@@ -114,11 +123,11 @@ module cpu(reset, clk);
 	regfile registerFile(
 		.ReadData1(Da),
 		.ReadData2(Db),
-		.WriteData(WrD),
+		.WriteData(WBData),
 		.ReadRegister1(Rn),
 		.ReadRegister2(RegChoose),
 		.WriteRegister(Rd),
-		.RegWrite(RegWrite),
+		.RegWrite(regWriteFuck),
 		.reset(reset),
 		.clk(~clk)
 	);
@@ -158,19 +167,22 @@ module cpu(reset, clk);
 	logic 
 		execute_MemWrite,
 		execute_MemToReg,
-		execute_RegWrite
-		execute_CmpMode
+		execute_RegWrite,
+		execute_CmpMode,
 		execute_clear,
-		execute_mov;
+		execute_mov,
+		execute_ByteOrFull,
+		execute_ByteorFullData;
 	logic [1:0] execute_shamt;
 	logic [2:0] execute_ALUOp;
 	logic [15:0] execute_Imm16;
 	logic [63:0] 
 		execute_Da,
 		execute_Db,
-		execute_addArg;
+		execute_addArg,
+		execute_ReadDataMem;
 	
-	register_BABY_Maker #? regdec_pipe(
+	register_BABY_Maker #285 regdec_pipe(
 		.q({
 			execute_Da,
 			execute_Db,
@@ -183,7 +195,11 @@ module cpu(reset, clk);
 			execute_RegWrite,
 			execute_CmpMode,
 			execute_clear,
-			execute_mov
+			execute_mov,
+			execute_ByteOrFull,
+			execute_ByteorFullData,
+			execute_ReadDataMem
+
 		}),
 		.in({
 			Da,
@@ -197,10 +213,13 @@ module cpu(reset, clk);
 			RegWrite,
 			CmpMode,
 			clear,
-			mov
+			mov,
+			ByteOrFull,
+			ByteorFullData,
+			ReadDataMem
 		}),
 		.clk(clk),
-		.reset(reset),
+		.reset(reset)
 	);   // -->
 	
 	// TODO execute_ALUSrc might be wanted
@@ -249,24 +268,34 @@ module cpu(reset, clk);
 	logic
 		mem_MemWrite,
 		mem_MemToReg,
-		mem_RegWrite;
-	logic [63:0] mem_ALUResult;
+		mem_RegWrite,
+		mem_ByteOrFull,
+		mem_ByteorFullData;
+		logic [63:0] mem_ALUResult, mem_Db, mem_ReadDataMem;
 	
-	register_BABY_Maker #132 execute_pipe(
+	register_BABY_Maker #197 execute_pipe(
 		.q({
-			mem_ALUResult
+			mem_ALUResult,
 			mem_MemWrite,
 			mem_MemToReg,
-			mem_RegWrite
+			mem_RegWrite,
+			mem_ByteOrFull,
+			mem_ByteorFullData,
+			mem_Db,
+			mem_ReadDataMem
 		}),
 		.in({
 			ALUResult,
 			execute_MemWrite,
 			execute_MemToReg,
-			execute_RegWrite
+			execute_RegWrite,
+			execute_ByteOrFull,
+			execute_ByteorFullData,
+			execute_Db,
+			execute_ReadDataMem
 		}),
 		.clk(clk),
-		.reset(reset),
+		.reset(reset)
 	);
 
 // MEM
@@ -276,14 +305,14 @@ module cpu(reset, clk);
 		.out(size),
 		.in0(4'b1000),
 		.in1(4'b0001),
-		.sel(ByteOrFull)
+		.sel(mem_ByteOrFull)
 	);
 
 	datamem dataMemory(
-	.address(ALUResult),
-	.write_enable(MemWrite),
-	.read_enable(DataMemRead),
-	.write_data(Db),
+	.address(mem_ALUResult),
+	.write_enable(mem_MemWrite),
+	.read_enable(mem_DataMemRead),
+	.write_data(mem_Db),
 	.clk(clk),
 	.xfer_size(size),
 	.read_data(ReadDataMem)
@@ -291,22 +320,29 @@ module cpu(reset, clk);
 
 	Big64mux2_1 RegWriteDataMux(
 		.out(WriteData),
-		.in0(ALUResult),
+		.in0(mem_ALUResult),
 		.in1(ReadDataMem),
-		.sel(MemToReg)
+		.sel(mem_MemToReg)
 	);
 
 	Big64mux2_1 LoadFullDataOrByte (
 		.out(WrD),
 		.in0(WriteData),
 		.in1({56'b00000000000000000000000000000000000000000000000000000000, WriteData[7:0]}),
-		.sel(ByteorFullData)
+		.sel(mem_ByteorFullData)
+	);
+
+	register_BABY_Maker #65 write_back_pipe(
+		.q({WBData, regWriteFuck}),
+		.in({WrD, mem_RegWrite}),
+		.clk(clk),
+		.reset(reset)
 	);
 endmodule
 
 module cpu_testbench();
 
-	parameter ClockDelay = 5000;
+	parameter ClockDelay = 10000;
 	logic clk, reset;
 	cpu dut (.reset, .clk);
 	
@@ -318,7 +354,7 @@ module cpu_testbench();
 	initial begin
 		reset <= 1; @(posedge clk);
 		reset <= 0; @(posedge clk);
-		for (i = 0; i < 1000; i++) begin
+		for (i = 0; i < 50; i++) begin
 			@(posedge clk);
 		end
 		$stop;

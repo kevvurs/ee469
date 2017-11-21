@@ -19,9 +19,11 @@
 //`define BENCHMARK "./CPU/test07_LdurbSturb.arm"
 //good
 //`define BENCHMARK "./CPU/test10_forwarding.arm"
+//good
 //`define BENCHMARK "./CPU/test11_Sort.arm"
-`define BENCHMARK "./CPU/test12_ToUpper.arm"
-
+//good
+//`define BENCHMARK "./CPU/test12_ToUpper.arm"
+`define BENCHMARK "./CPU/test_daniel.arm"
 `timescale 1ns/10ps
 
 // How many bytes are in our memory?  Must be a power of two.

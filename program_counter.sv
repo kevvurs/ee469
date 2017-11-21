@@ -2,11 +2,13 @@ module program_counter (
 	program_index,			// out
 	cond_addr, br_addr,  // args
 	uncondbr, br_taken,  // control
+	baby_maker_br,
 	reset, clk  			// standard
 );
 	output logic [63:0] program_index;
 	input logic uncondbr, br_taken,
 		reset, clk;
+	input logic [63:0] baby_maker_br;
 	input logic [18:0] cond_addr;
 	input logic [25:0] br_addr;
 	
@@ -38,7 +40,7 @@ module program_counter (
 	);
 	
 	alu pc_incr (
-		.A(count_rd),
+		.A(baby_maker_br),
 		.B(incr),
 		.cntrl(add_code),
 		.result(step),
