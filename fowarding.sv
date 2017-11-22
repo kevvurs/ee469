@@ -16,10 +16,10 @@ module fowarding(alu_rd_key, alu_result,
 
   always_comb begin
     // Write
-    alu_store_key[0][4:0] <= mem_rd_key;
-    alu_store_key[1][4:0] <= alu_rd_key;
-    alu_store_value[0][63:0] <= mem_result;
-    alu_store_value[1][63:0] <= alu_result;
+    alu_store_key[0][4:0] = mem_rd_key;
+    alu_store_key[1][4:0] = alu_rd_key;
+    alu_store_value[0][63:0] = mem_result;
+    alu_store_value[1][63:0] = alu_result;
 
     // Read
     if (reg_rm_lookup == x31) begin
@@ -42,10 +42,10 @@ module fowarding(alu_rd_key, alu_result,
       rn_fetch = 64'd0;
       rn_valid =1'b0;
     end else begin
-      if (reg_rm_lookup == alu_store_key[1]) begin
+      if (reg_rn_lookup == alu_store_key[1]) begin
         rn_fetch = alu_store_value[1];
         rn_valid =1'b1;
-      end else if (reg_rm_lookup == alu_store_key[0]) begin
+      end else if (reg_rn_lookup == alu_store_key[0]) begin
         rn_fetch = alu_store_value[0];
         rn_valid =1'b1;
       end else begin
