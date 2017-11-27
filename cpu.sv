@@ -128,7 +128,7 @@ module cpu(reset, clk);
 	// Proceccinfg block
 	n_mux2_1 #5 ChooseWhatInput(
 		.out(RegChoose),
-		.in0(wb_Rd),
+		.in0(Rd),
 		.in1(Rm),
 		.sel(Reg2Loc)
 	);
@@ -148,7 +148,7 @@ module cpu(reset, clk);
 	// Accelerated Branch
 	zeroFlagCheck accel(
 		.zeroFlagCheck(isZero),
-		.result(Db)
+		.result(addArg)
 	);
 
 	sign_extend #(9, 64) extDaddr(
@@ -171,7 +171,7 @@ module cpu(reset, clk);
 
 	Big64mux2_1 ChooseConstantOrDb(
 		.out(addArg),
-		.in0(Db),
+		.in0(fwd_Db),
 		.in1(constArg),
 		.sel(ALUSrc)
 	);  // -> ALU input B
@@ -206,7 +206,7 @@ module cpu(reset, clk);
 
 	Big64mux2_1 muxymux(
 		.out(fwd_Db),
-		.in0(addArg),
+		.in0(Db),
 		.in1(rm_catch),
 		.sel(rm_valid)
 	);
@@ -227,7 +227,8 @@ module cpu(reset, clk);
 		execute_clear,
 		execute_mov,
 		execute_ByteOrFull,
-		execute_ByteorFullData;
+		execute_ByteorFullData,
+		execute_DataMemRead;
 	logic [1:0] execute_shamt;
 	logic [2:0] execute_ALUOp;
 	logic [15:0] execute_Imm16;
@@ -237,7 +238,7 @@ module cpu(reset, clk);
 		execute_addArg,
 		execute_ReadDataMem;
 
-	register_BABY_Maker #291 regdec_pipe(
+	register_BABY_Maker #293 regdec_pipe(
 		.q({
 			execute_Da,
 			execute_Db,
@@ -255,7 +256,8 @@ module cpu(reset, clk);
 			execute_ByteorFullData,
 			execute_ReadDataMem,
 			execute_Rd,
-			execute_fwd_en
+			execute_fwd_en,
+			execute_DataMemRead
 		}),
 		.in({
 			fwd_Da,
@@ -274,7 +276,8 @@ module cpu(reset, clk);
 			ByteorFullData,
 			ReadDataMem,
 			Rd,
-			fwd_en
+			fwd_en,
+			DataMemRead
 		}),
 		.clk(clk),
 		.reset(reset)
@@ -328,11 +331,12 @@ module cpu(reset, clk);
 		mem_MemToReg,
 		mem_RegWrite,
 		mem_ByteOrFull,
-		mem_ByteorFullData;
+		mem_ByteorFullData,
+		mem_DataMemRead;
 	logic [63:0] mem_ALUResult, mem_Db, mem_ReadDataMem;
 
 
-	register_BABY_Maker #203 execute_pipe(
+	register_BABY_Maker #205 execute_pipe(
 		.q({
 			mem_exe_out,
 			mem_MemWrite,
@@ -343,7 +347,8 @@ module cpu(reset, clk);
 			mem_Db,
 			mem_ReadDataMem,
 			mem_Rd,
-			mem_fwd_en
+			mem_fwd_en,
+			mem_DataMemRead
 		}),
 		.in({
 			exe_out,
@@ -355,7 +360,8 @@ module cpu(reset, clk);
 			execute_Db,
 			execute_ReadDataMem,
 			execute_Rd,
-			execute_fwd_en
+			execute_fwd_en,
+			execute_DataMemRead
 		}),
 		.clk(clk),
 		.reset(reset)

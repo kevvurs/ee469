@@ -4,13 +4,13 @@
 //
 // To change the file that is loaded, edit the filename here:
 //good
-`define BENCHMARK "./CPU/test01_AddiB.arm"
+//`define BENCHMARK "./CPU/test01_AddiB.arm"
 //good
 //`define BENCHMARK "./CPU/test02_AddsSubs.arm"
 //good
 //`define BENCHMARK "./CPU/test03_CbzB.arm"
 //good
-//`define BENCHMARK "./CPU/test04_LdurStur.arm"
+`define BENCHMARK "./CPU/test04_LdurStur.arm"
 //good
 //`define BENCHMARK "./CPU/test05_Blt.arm"
 //good

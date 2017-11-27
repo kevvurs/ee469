@@ -2,6 +2,8 @@ onerror {resume}
 quietly WaveActivateNextPane {} 0
 add wave -noupdate -color Gold -label reset /cpu_testbench/reset
 add wave -noupdate -color Gold -label clk /cpu_testbench/clk
+add wave -noupdate -expand -group Accelerate -label result /cpu_testbench/dut/accel/result
+add wave -noupdate -expand -group Accelerate -label zeroFlagCheck /cpu_testbench/dut/accel/zeroFlagCheck
 add wave -noupdate -group Control -label UncondBr /cpu_testbench/dut/controls/UncondBr
 add wave -noupdate -group Control -label BrTaken /cpu_testbench/dut/controls/BrTaken
 add wave -noupdate -group Control -label Reg2Loc /cpu_testbench/dut/controls/Reg2Loc
@@ -38,7 +40,7 @@ add wave -noupdate -expand -group Forward -color Orchid -label rn_valid /cpu_tes
 add wave -noupdate -expand -group Forward -color Orchid -label alu_store_value -childformat {{{/cpu_testbench/dut/BigBitch/alu_store_value[1]} -radix decimal} {{/cpu_testbench/dut/BigBitch/alu_store_value[0]} -radix decimal}} -expand -subitemconfig {{/cpu_testbench/dut/BigBitch/alu_store_value[1]} {-color Orchid -height 15 -radix decimal} {/cpu_testbench/dut/BigBitch/alu_store_value[0]} {-color Orchid -height 15 -radix decimal}} /cpu_testbench/dut/BigBitch/alu_store_value
 add wave -noupdate -expand -group Forward -color Orchid -label alu_store_key -expand -subitemconfig {{/cpu_testbench/dut/BigBitch/alu_store_key[1]} {-color Orchid -height 15} {/cpu_testbench/dut/BigBitch/alu_store_key[0]} {-color Orchid -height 15}} /cpu_testbench/dut/BigBitch/alu_store_key
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {128073218 ps} 0}
+WaveRestoreCursors {{Cursor 1} {206059767 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 167
 configure wave -valuecolwidth 198
@@ -54,4 +56,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {116476635 ps} {179031281 ps}
+WaveRestoreZoom {189327043 ps} {323961116 ps}
