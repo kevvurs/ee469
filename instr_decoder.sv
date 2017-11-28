@@ -196,6 +196,7 @@ module instr_decoder(instruction,
 									MemWrite = 1'b1;
 									MemToReg = 1'b1;
 									ByteOrFull = 1'b1;
+									fwd_en = 1'b0;
 								end
 
 								LDURB: begin
@@ -223,6 +224,7 @@ module instr_decoder(instruction,
 									MemWrite = 1'b1;
 									MemToReg = 1'b1;
 									ByteOrFull = 1'b0;
+									fwd_en = 1'b0;
 								end
 
 								LDUR:begin

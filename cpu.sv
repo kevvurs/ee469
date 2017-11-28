@@ -30,6 +30,7 @@ module cpu(reset, clk);
 	// Data
 	logic [63:0] Da, Db;
 	logic [3:0] flags;
+	logic [3:0] current_flags;
 	logic negative, isZero, zero, overflow, carry_out;
 	logic [63:0] ALUResult, addArg, constArg, fullOrByte, WrD;
 
@@ -52,7 +53,7 @@ module cpu(reset, clk);
 	logic [4:0] wb_Rd;
 
 	// forwarding crap
-	logic fwd_en;
+	logic fwd_en, exec_fwd_en, mem_fwd_en;
 	logic [4:0] fwd_exe_id;
 	logic [4:0] fwd_mem_id;
 	logic [63:0] rm_catch;
@@ -95,7 +96,7 @@ module cpu(reset, clk);
 	instr_decoder controls(
 		.instruction(currentInstruction),
 		.ZeroFlag(isZero),
-		.flags,
+		.flags(current_flags),
 		.UncondBr,
 		.BrTaken,
 		.Reg2Loc,
@@ -195,7 +196,7 @@ module cpu(reset, clk);
 		.alu_rd_key(fwd_exe_id),
 		.alu_result(exe_out),
 		.mem_rd_key(fwd_mem_id),
-		.mem_result(mem_exe_out),
+		.mem_result(WriteData),
 		.reg_rm_lookup(RegChoose),
 		.reg_rn_lookup(Rn),
 	  .rm_fetch(rm_catch),
@@ -238,7 +239,7 @@ module cpu(reset, clk);
 		execute_addArg,
 		execute_ReadDataMem;
 
-	register_BABY_Maker #293 regdec_pipe(
+	register_BABY_Maker #292 regdec_pipe(
 		.q({
 			execute_Da,
 			execute_Db,
@@ -314,7 +315,7 @@ module cpu(reset, clk);
 		.in1(inserted),
 		.sel(execute_mov)
 	);
-
+	
 	// TODO: integrate this with readahead
 	Reg_Create #(4) FlagRegister(
 		.q(flags),
@@ -323,8 +324,13 @@ module cpu(reset, clk);
 		.reset(reset),
 		.clk(clk)
 	);
-
-	// TODO: Forwarding plugin here
+	
+	n_mux2_1 #4 flagM(
+		.out(current_flags),
+		.in0(flags),
+		.in1({negative, zero, overflow, carry_out}),
+		.sel(execute_CmpMode)
+	);
 
 	logic
 		mem_MemWrite,
@@ -333,10 +339,11 @@ module cpu(reset, clk);
 		mem_ByteOrFull,
 		mem_ByteorFullData,
 		mem_DataMemRead;
+		
 	logic [63:0] mem_ALUResult, mem_Db, mem_ReadDataMem;
 
 
-	register_BABY_Maker #205 execute_pipe(
+	register_BABY_Maker #204 execute_pipe(
 		.q({
 			mem_exe_out,
 			mem_MemWrite,
@@ -422,7 +429,7 @@ module cpu_testbench();
 	initial begin
 		reset <= 1; @(posedge clk);
 		reset <= 0; @(posedge clk);
-		for (i = 0; i < 50; i++) begin
+		for (i = 0; i < 1500; i++) begin
 			@(posedge clk);
 		end
 		$stop;

@@ -10,7 +10,7 @@
 //good
 //`define BENCHMARK "./CPU/test03_CbzB.arm"
 //good
-`define BENCHMARK "./CPU/test04_LdurStur.arm"
+//`define BENCHMARK "./CPU/test04_LdurStur.arm"
 //good
 //`define BENCHMARK "./CPU/test05_Blt.arm"
 //good
@@ -22,7 +22,7 @@
 //good
 //`define BENCHMARK "./CPU/test11_Sort.arm"
 //good
-//`define BENCHMARK "./CPU/test12_ToUpper.arm"
+`define BENCHMARK "./CPU/test12_ToUpper.arm"
 //`define BENCHMARK "./CPU/test_daniel.arm"
 `timescale 1ns/10ps
 
