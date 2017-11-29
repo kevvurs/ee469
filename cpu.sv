@@ -196,7 +196,7 @@ module cpu(reset, clk);
 		.alu_rd_key(fwd_exe_id),
 		.alu_result(exe_out),
 		.mem_rd_key(fwd_mem_id),
-		.mem_result(WriteData),
+		.mem_result(WrD),
 		.reg_rm_lookup(RegChoose),
 		.reg_rn_lookup(Rn),
 	  .rm_fetch(rm_catch),
@@ -429,7 +429,7 @@ module cpu_testbench();
 	initial begin
 		reset <= 1; @(posedge clk);
 		reset <= 0; @(posedge clk);
-		for (i = 0; i < 1500; i++) begin
+		for (i = 0; i < 1000; i++) begin
 			@(posedge clk);
 		end
 		$stop;
