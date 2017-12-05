@@ -238,7 +238,7 @@ module lab5_testbench ();
 	
 	logic	[DATA_WIDTH-1:0][7:0]	dummy_data;
 	logic [ADDRESS_WIDTH-1:0]		addr, addr2;
-	int	i, delay, minval, maxval;
+	int	i, n, s, delay, minval, maxval;
 	initial begin
 		dummy_data <= '0;
 		resetMem();				// Initialize the memory.
@@ -266,8 +266,40 @@ module lab5_testbench ();
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
 */
-
-
+		n = 65;
+		s = 64;
+		for (i=0; i<n; i++) begin
+		addr = i*s; // *8 to doubleword-align the access.
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles %d@i", $time, addr, delay, i);
+		end
+/*
+		addr = 20'd256;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+*/
+		for (i=0; i<n; i++) begin
+		addr = i*s; // *8 to doubleword-align the access.
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles %d@i", $time, addr, delay, i);
+		end
+/*
+		addr = 128;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+*/
+/*
+		addr = 20'd256;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+		addr = 20'd128;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+		addr = 20'd256;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+*/
+/*
 		// L2 associativity check
 		addr = 20'b00000000000_000_10000;
 		readMem(addr, dummy_data, delay);
@@ -286,9 +318,9 @@ module lab5_testbench ();
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
 		readMem(addr, dummy_data, delay);
-
+*/
 /*		// Blocksize check for L1
-		for (i=0; i<24; i++) begin
+		for (i=0; i<9; i++) begin
 		addr = i*16; // *8 to doubleword-align the access.
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
@@ -298,19 +330,19 @@ module lab5_testbench ();
 		$display("%t %d Read took %d cycles", $time, addr2, delay);
 		readMem(addr2, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr2, delay);
-*/
+
 
 		// Blocksize check for L2 
-/*
-		for (i=0; i<30; i++) begin
+*/
+/*		for (i=0; i<31; i++) begin
 		addr = i*16; // *8 to doubleword-align the access.
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
 		end
-		addr = 512;
+		addr = 511;
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
-*/
+
 		/*for (i=8; i<16; i++) begin
 		addr = i*16; // *8 to doubleword-align the access.
 		readMem(addr, dummy_data, delay);
