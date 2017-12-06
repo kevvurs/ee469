@@ -25,7 +25,7 @@
 // Line to set up the timing of simulation: says units to use are ns, and smallest resolution is 10ps.
 `timescale 1ns/10ps
 
-module lab5 #(parameter [22:0] MODEL_NUMBER = 1350364, parameter DMEM_ADDRESS_WIDTH = 20) (
+module lab5 #(parameter [22:0] MODEL_NUMBER = 1522698, parameter DMEM_ADDRESS_WIDTH = 20) (
 	// Commands:
 	//   (Comes from processor).
 	input		logic [DMEM_ADDRESS_WIDTH-1:0]	address,			// The byte address.  Must be word-aligned if byte_access != 1.
@@ -377,14 +377,33 @@ module lab5_testbench ();
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
 */
-
-		//Do 5 random double-word writes of random data.
-		for (i=0; i<5; i++) begin
-			addr = $random()*8; // *8 to doubleword-align the access.
-			dummy_data = $random();
-			writeMem(addr, dummy_data, 8'hFF, delay);
-			$display("%t Write took %d cycles", $time, delay);
+/*		for (i=0; i<16; i++) begin
+		addr = i*32;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
 		end
+		*/
+		//Do 5 random double-word writes of random data.
+
+		for (i=0; i<17; i++) begin
+			addr = i*32; // *8 to doubleword-align the access.
+			dummy_data = $random();
+			readMem(addr, dummy_data, delay);
+			$display("%t %d Read took %d cycles", $time, addr, delay);
+			//writeMem(addr, dummy_data, 8'hFF, delay);
+			//$display("%t %d Write took %d cycles", $time, addr, delay);
+			//readMem(addr, dummy_data, delay);
+			//$display("%t %d Read took %d cycles", $time, addr, delay);
+		end
+		//addr = 192;			
+		//writeMem(addr, dummy_data, 8'hFF, delay);		
+		//$display("%t %d Write took %d cycles", $time, addr, delay);
+
+		addr = 32;	
+		writeMem(addr, dummy_data, 8'hFF, delay);		
+		$display("%t %d Write took %d cycles", $time, addr, delay);
+			readMem(addr, dummy_data, delay);
+			$display("%t %d Read took %d cycles", $time, addr, delay);
 
 		// Reset the memory.
 		resetMem();
