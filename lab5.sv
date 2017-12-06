@@ -266,23 +266,48 @@ module lab5_testbench ();
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
 */
-		n = 65;
-		s = 64;
-		for (i=0; i<n; i++) begin
-		addr = i*s; // *8 to doubleword-align the access.
+
+/* 		for (i=0; i<32; i++) begin
+		addr = i*128;
 		readMem(addr, dummy_data, delay);
-		$display("%t %d Read took %d cycles %d@i", $time, addr, delay, i);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
 		end
+
+		n = 31;
+		s = 32;
+		for (i=0; i<n; i++) begin
+			addr = i*s; // *8 to doubleword-align the access.
+			if (addr != 20'd2048 || addr != 20'd3072 || addr != 20'd768) begin
+			readMem(addr, dummy_data, delay);
+			$display("%t %d Read took %d cycles %d@i", $time, addr, delay, i);
+			end
+		end
+*/
 /*
-		addr = 20'd256;
+		for (i=0; i<32; i++) begin
+		addr = i*256;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+		end
+*/
+/*
+		addr = 20'd0;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+		addr = 20'd2048;
+		readMem(addr, dummy_data, delay);
+		$display("%t %d Read took %d cycles", $time, addr, delay);
+		addr = 20'd4096;
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
 */
+/*
 		for (i=0; i<n; i++) begin
 		addr = i*s; // *8 to doubleword-align the access.
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles %d@i", $time, addr, delay, i);
 		end
+*/
 /*
 		addr = 128;
 		readMem(addr, dummy_data, delay);
@@ -351,15 +376,16 @@ module lab5_testbench ();
 		addr = 0;
 		readMem(addr, dummy_data, delay);
 		$display("%t %d Read took %d cycles", $time, addr, delay);
+*/
 
-		// Do 5 random double-word writes of random data.
+		//Do 5 random double-word writes of random data.
 		for (i=0; i<5; i++) begin
 			addr = $random()*8; // *8 to doubleword-align the access.
 			dummy_data = $random();
 			writeMem(addr, dummy_data, 8'hFF, delay);
 			$display("%t Write took %d cycles", $time, delay);
 		end
-		*/
+
 		// Reset the memory.
 		resetMem();
 		
